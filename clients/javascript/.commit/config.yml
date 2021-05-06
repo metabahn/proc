@@ -1,0 +1,47 @@
+commit:
+  changelogs:
+    - label: "commit.changelog.client.js"
+      destination: "./CHANGELOG.md"
+
+  changetypes:
+    - label: "commit.type.add"
+      name: "add"
+    - label: "commit.type.chg"
+      name: "chg"
+    - label: "commit.type.fix"
+      name: "fix"
+    - label: "commit.type.dep"
+      name: "dep"
+
+  includes:
+    - oss
+    - git
+    - base
+
+  externals:
+    - repo: "metabahn/commit-templates"
+      private: true
+
+git:
+  ignore:
+    - ".env"
+    - "dist"
+    - "node_modules"
+    - "tmp"
+
+license:
+  slug: mpl
+  name: "MPL-2.0"
+
+project:
+  slug: "proc"
+  description: "Proc JavaScript client."
+
+  author:
+    name: "Bryan Powell"
+    email: "bryan@metabahn.com"
+    homepage: "https://github.com/metabahn/proc/clients/javascript/"
+
+  copyright:
+    attribution: "Metabahn"
+    year: 2021

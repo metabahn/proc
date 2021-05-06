@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  test-client-javascript:
+    runs-on: ubuntu-latest
+
+    name: Test JavaScript
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Setup
+        shell: bash -l -e -o pipefail {0}
+        run: |
+          rm -f package-json.lock
+          npm install
+
+      - name: Test
+        shell: bash -l -e -o pipefail {0}
+        run: |
+          npm test
+        env:
+          SECRET: ${{secrets.PROC_SECRET}}
+
+  lint-client-ruby:
+    runs-on: ubuntu-latest
+
+    name: Lint Ruby
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.0.1
+          bundler-cache: true
+
+      - name: Run Linter
+        shell: bash -l -e -o pipefail {0}
+        run: |
+          CI=true bundle exec standardrb
+
+  test-client-ruby:
+    runs-on: ubuntu-latest
+
+    name: Test Ruby ${{ matrix.ruby }}
+
+    strategy:
+      matrix:
+        ruby:
+          - 3.0.1
+
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Run Tests
+        shell: bash -l -e -o pipefail {0}
+        run: |
+          bundle exec rspec
+        env:
+          SECRET: ${{secrets.PROC_SECRET}}
