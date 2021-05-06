@@ -56,8 +56,8 @@ class Proc
 
   # [public] Connection to proc, configured with an authorization.
   #
-  class Client
-    include Is::Async
+  class Client < BasicObject
+    include ::Is::Async
 
     # [public] The configured authorization.
     #
@@ -97,10 +97,10 @@ class Proc
     # [public] Returns a callable context for `proc`.
     #
     def [](proc)
-      if block_given?
-        Callable.new(proc, client: self, arguments: {proc: yield})
+      if ::Kernel.block_given?
+        ::Proc::Callable.new(proc, client: self, arguments: {proc: yield})
       else
-        Callable.new(proc, client: self)
+        ::Proc::Callable.new(proc, client: self)
       end
     end
 
@@ -135,10 +135,10 @@ class Proc
     #
     # If a block is passed and the proc returns an enumerable, the block will be called with each value.
     #
-    def call(proc = nil, input = Proc.undefined, **arguments, &block)
+    def call(proc = nil, input = ::Proc.undefined, **arguments, &block)
       body = []
 
-      unless Proc.undefined?(input)
+      unless ::Proc.undefined?(input)
         body << [">>", serialize_value(input)]
       end
 
@@ -154,9 +154,9 @@ class Proc
 
         if (cursor = headers["x-cursor"])
           enumerator = if cursor.empty?
-            Enumerator.new(result)
+            ::Proc::Enumerator.new(result)
           else
-            Enumerator.new(result) {
+            ::Proc::Enumerator.new(result) {
               arguments[:cursor] = cursor.to_s
               call(proc, input, **arguments)
             }
@@ -171,25 +171,25 @@ class Proc
           result
         end
       when 400
-        raise Proc::Invalid, extract_error_message(payload)
+        ::Kernel.raise ::Proc::Invalid, extract_error_message(payload)
       when 401
-        raise Proc::Unauthorized, extract_error_message(payload)
+        ::Kernel.raise ::Proc::Unauthorized, extract_error_message(payload)
       when 403
-        raise Proc::Forbidden, extract_error_message(payload)
+        ::Kernel.raise ::Proc::Forbidden, extract_error_message(payload)
       when 404
-        raise Proc::Undefined, extract_error_message(payload)
+        ::Kernel.raise ::Proc::Undefined, extract_error_message(payload)
       when 408
-        raise Proc::Timeout, extract_error_message(payload)
+        ::Kernel.raise ::Proc::Timeout, extract_error_message(payload)
       when 413
-        raise Proc::Invalid, extract_error_message(payload)
+        ::Kernel.raise ::Proc::Invalid, extract_error_message(payload)
       when 429
-        raise Proc::Limited, extract_error_message(payload)
+        ::Kernel.raise ::Proc::Limited, extract_error_message(payload)
       when 500
-        raise Proc::Error, extract_error_message(payload)
+        ::Kernel.raise ::Proc::Error, extract_error_message(payload)
       when 508
-        raise Proc::Error, extract_error_message(payload)
+        ::Kernel.raise ::Proc::Error, extract_error_message(payload)
       else
-        raise Proc::Error, "unhandled"
+        ::Kernel.raise ::Proc::Error, "unhandled"
       end
     end
 
@@ -197,9 +197,9 @@ class Proc
     #
     def method_missing(name, input = input_omitted = true, *, **arguments)
       if input_omitted
-        Callable.new(name, client: self, arguments: arguments)
+        ::Proc::Callable.new(name, client: self, arguments: arguments)
       else
-        Callable.new(name, client: self, input: input, arguments: arguments)
+        ::Proc::Callable.new(name, client: self, input: input, arguments: arguments)
       end
     end
 
@@ -210,18 +210,19 @@ class Proc
     # [public] Builds a named argument with options.
     #
     def argument(name, **options)
-      Argument.new(name, **options)
+      ::Proc::Argument.new(name, **options)
     end
     alias_method :arg, :argument
 
     private def build_uri(proc)
-      File.join(@__base_url, proc.to_s.split(".").join("/"))
+      ::File.join(@__base_url, proc.to_s.split(".").join("/"))
     end
 
     private def serialize_value(value)
-      if value.is_a?(Symbol)
+      case value
+      when ::Symbol
         ["@@", value.to_s, {}]
-      elsif value.respond_to?(:serialize)
+      when ::Proc::Argument, ::Proc::Callable, ::Proc::Composition
         value.serialize
       else
         ["%%", value]
@@ -229,20 +230,18 @@ class Proc
     end
 
     private def get_payload(proc:, body:)
-      puts ">> #{proc}, #{body.inspect}"
-
       await {
         @request_count += 1
 
-        response = HTTP.headers(@__headers).post(build_uri(proc), body: MessagePack.pack(body))
+        response = ::HTTP.headers(@__headers).post(build_uri(proc), body: ::MessagePack.pack(body))
 
         update_rate_limit(response)
         @response = response
 
-        [response.status, response.headers, MessagePack.unpack(response.to_s)]
+        [response.status, response.headers, ::MessagePack.unpack(response.to_s)]
       }
     rescue
-      raise Proc::Unavailable
+      ::Kernel.raise ::Proc::Unavailable
     end
 
     private def update_rate_limit(response)
@@ -258,7 +257,7 @@ class Proc
       end
 
       @rate_limit_reset = if (reset = response.headers["x-rate-limit-reset"])
-        Time.at(reset.to_s.to_i)
+        ::Time.at(reset.to_s.to_i)
       end
     end
 

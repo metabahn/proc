@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class Proc
-  class Callable
+  class Callable < BasicObject
     attr_reader :proc, :input, :arguments
 
-    def initialize(proc, client:, input: Proc.undefined, arguments: {})
+    def initialize(proc, client:, input: ::Proc.undefined, arguments: {})
       @proc = proc.to_s
       @client = client
       @input = input
@@ -21,11 +21,11 @@ class Proc
     # If a block is passed, it will be called to prior to dispatch and its result passed as a nested context.
     #
     def call(input = input_omitted = true, **arguments)
-      if block_given?
+      if ::Kernel.block_given?
         arguments[:proc] = yield
       end
 
-      callable = self.class.new(
+      callable = ::Proc::Callable.new(
         @proc,
         client: @client,
         input: input_omitted ? @input : input,
@@ -38,7 +38,7 @@ class Proc
     # [public] Dispatches this callable context to proc using the client, calling the given block once for each value.
     #
     def each(input = input_omitted = true, **arguments, &block)
-      callable = self.class.new(
+      callable = ::Proc::Callable.new(
         @proc,
         client: @client,
         input: input_omitted ? @input : input,
@@ -51,11 +51,11 @@ class Proc
     # [public] Creates a new callable context based on this one, with a new input and/or arguments.
     #
     def with(input = input_omitted = true, **arguments)
-      if block_given?
+      if ::Kernel.block_given?
         arguments[:proc] = yield
       end
 
-      self.class.new(
+      ::Proc::Callable.new(
         @proc,
         client: @client,
         input: input_omitted ? @input : input,
@@ -66,7 +66,7 @@ class Proc
     # [public] Returns a composition built from this callable context and one or more other callables.
     #
     def compose(*others)
-      composed = Composition.new(client: @client, input: @input)
+      composed = ::Proc::Composition.new(client: @client, input: @input)
       composed << self
       others.each { |other| composed << other }
       composed
@@ -75,7 +75,7 @@ class Proc
     # [public] Returns a composition built from this callable context and another callable.
     #
     def >>(other)
-      composed = Composition.new(client: @client, input: @input)
+      composed = ::Proc::Composition.new(client: @client, input: @input)
       composed << self
       composed << other
       composed
@@ -84,7 +84,7 @@ class Proc
     def serialize(unwrapped: false)
       serialized = ["()", @proc]
 
-      unless Proc.undefined?(@input)
+      unless ::Proc.undefined?(@input)
         serialized << [">>", serialized_input]
       end
 
@@ -110,7 +110,7 @@ class Proc
     # [public] Returns a callable context for `proc`, nested within this callable context.
     #
     def [](proc)
-      arguments = if block_given?
+      arguments = if ::Kernel.block_given?
         duped = @arguments.dup
         duped[:proc] = yield
         duped
@@ -118,7 +118,7 @@ class Proc
         @arguments
       end
 
-      Callable.new(
+      ::Proc::Callable.new(
         [@proc, proc].join("."),
         client: @client,
         input: @input,
@@ -134,11 +134,11 @@ class Proc
       if IGNORE_MISSING.include?(name)
         super
       else
-        if block_given?
+        if ::Kernel.block_given?
           arguments[:proc] = yield
         end
 
-        Callable.new(
+        ::Proc::Callable.new(
           [@proc, name].join("."),
           client: @client,
           input: input_omitted ? @input : input,
@@ -156,9 +156,10 @@ class Proc
     end
 
     private def serialize_value(value)
-      if value.is_a?(Symbol)
+      case value
+      when ::Symbol
         ["@@", value.to_s, {}]
-      elsif value.respond_to?(:serialize)
+      when ::Proc::Argument, ::Proc::Callable, ::Proc::Composition
         value.serialize
       else
         ["%%", value]

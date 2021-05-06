@@ -113,9 +113,10 @@ class Proc
     end
 
     private def serialize_value(value)
-      if value.is_a?(Symbol)
+      case value
+      when Symbol
         ["@@", value.to_s, {}]
-      elsif value.respond_to?(:serialize)
+      when Argument, Callable, Composition
         value.serialize
       else
         ["%%", value]
