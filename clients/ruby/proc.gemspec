@@ -20,6 +20,6 @@ Gem::Specification.new do |spec|
   spec.require_path = "lib"
 
   spec.add_dependency "core-async", "~> 0.5.0"
-  spec.add_dependency "http", "~> 4.4"
+  spec.add_dependency "http", "~> 5.0"
   spec.add_dependency "msgpack", "~> 1.4"
 end
