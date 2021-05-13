@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Proc
-  VERSION = "0.12.0"
+  VERSION = "0.12.1"
 
   # [public]
   #

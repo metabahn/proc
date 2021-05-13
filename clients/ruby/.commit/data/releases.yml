@@ -1,0 +1,12 @@
+---
+- version: v0.12.1
+  date: '2021-05-13'
+  link: https://github.com/metabahn/proc/releases/tag/2021-05-13
+  changes:
+  - id: 2
+    type: chg
+    summary: Update http.rb dependency
+    link: https://github.com/metabahn/proc/pull/2
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
