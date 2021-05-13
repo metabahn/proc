@@ -1,0 +1,12 @@
+---
+- version: v0.7.2
+  date: '2021-05-13'
+  link: https://github.com/metabahn/proc/releases/tag/2021-05-13
+  changes:
+  - id: 1
+    type: chg
+    summary: Update fetch-retry dependency
+    link: https://github.com/metabahn/proc/pull/1
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
