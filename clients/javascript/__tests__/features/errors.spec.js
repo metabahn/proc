@@ -54,7 +54,7 @@ test("throws the request is too large", async () => {
 describe("unknown proc discovery", () => {
   test("lists procs at root", async () => {
     await expect(() => client.call()).rejects.toThrowError(Undefined);
-    await expect(() => client.call()).rejects.toThrowError("undefined proc; try one of: auth, core, enum, keyv, math, proc, rand, time, type");
+    await expect(() => client.call()).rejects.toThrowError("undefined proc; try one of: auth, base, core, enum, keyv, math, proc, rand, time, type, uuid");
   });
 
   test("lists procs at a nested namespace", async () => {
@@ -64,6 +64,6 @@ describe("unknown proc discovery", () => {
 
   test("lists procs at a deeply nested namespace", async () => {
     await expect(() => client.call("type.string.blah")).rejects.toThrowError(Undefined);
-    await expect(() => client.call("type.string.blah")).rejects.toThrowError("undefined proc `type.string.blah'; try one of: type.string, type.string.append, type.string.capitalize, type.string.characters, type.string.chomp, type.string.downcase, type.string.empty, type.string.equal, type.string.integer, type.string.length, type.string.prepend, type.string.reverse, type.string.swapcase, type.string.truncate, type.string.upcase");
+    await expect(() => client.call("type.string.blah")).rejects.toThrowError("undefined proc `type.string.blah'; try one of: type.string, type.string.append, type.string.build, type.string.capitalize, type.string.characters, type.string.chomp, type.string.downcase, type.string.empty, type.string.equal, type.string.integer, type.string.length, type.string.prepend, type.string.reverse, type.string.split, type.string.swapcase, type.string.truncate, type.string.upcase");
   });
 });

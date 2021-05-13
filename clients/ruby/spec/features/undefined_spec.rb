@@ -8,7 +8,7 @@ RSpec.describe "ruby client api: undefined" do
   it "does not pass undefined input to calls" do
     expect {
       client["core.echo"].call
-    }.to raise_error(Proc::Invalid, "invalid input for `core.echo' (was undefined)")
+    }.to raise_error(Proc::Invalid, "proc `core.echo' does not accept an undefined input")
   end
 
   it "does not pass undefined input to compositions" do
@@ -16,7 +16,7 @@ RSpec.describe "ruby client api: undefined" do
 
     expect {
       composition.call
-    }.to raise_error(Proc::Invalid, "invalid input for `core.echo' (was undefined)")
+    }.to raise_error(Proc::Invalid, "proc `core.echo' does not accept an undefined input")
   end
 
   it "does not confuse nil with undefined" do
