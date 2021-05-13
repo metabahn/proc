@@ -21,12 +21,14 @@ jobs:
       - name: Setup
         shell: bash -l -e -o pipefail {0}
         run: |
+          cd clients/javascript
           rm -f package-json.lock
           npm install
 
       - name: Test
         shell: bash -l -e -o pipefail {0}
         run: |
+          cd clients/javascript
           npm test
         env:
           SECRET: ${{secrets.PROC_SECRET}}
@@ -47,10 +49,12 @@ jobs:
         with:
           ruby-version: 3.0.1
           bundler-cache: true
+          working-directory: clients/ruby
 
       - name: Run Linter
         shell: bash -l -e -o pipefail {0}
         run: |
+          cd clients/ruby
           CI=true bundle exec standardrb
 
   test-client-ruby:
@@ -73,10 +77,12 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+          working-directory: clients/ruby
 
       - name: Run Tests
         shell: bash -l -e -o pipefail {0}
         run: |
+          cd clients/ruby
           bundle exec rspec
         env:
           SECRET: ${{secrets.PROC_SECRET}}
