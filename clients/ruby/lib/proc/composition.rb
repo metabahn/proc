@@ -29,7 +29,7 @@ class Proc
         arguments: @arguments.merge(arguments)
       )
 
-      @client.call("core.exec", Proc.undefined, proc: callable)
+      @client.call("core.exec", Proc::Client.undefined, proc: callable)
     end
 
     # [public] Dispatches this composition to proc using the client, calling the given block once for each value.
@@ -42,7 +42,7 @@ class Proc
         arguments: @arguments.merge(arguments)
       )
 
-      @client.call("core.exec", Proc.undefined, proc: callable, &block)
+      @client.call("core.exec", Proc::Client.undefined, proc: callable, &block)
     end
 
     # [public] Creates a new composition based on this one, with a new input and/or arguments.
@@ -88,7 +88,7 @@ class Proc
     def serialize
       serialized = ["{}"]
 
-      unless Proc.undefined?(@input)
+      unless Proc::Client.undefined?(@input)
         serialized << [">>", serialized_input]
       end
 

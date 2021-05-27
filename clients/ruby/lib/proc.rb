@@ -10,13 +10,5 @@ class Proc
     def connect(authorization, **options)
       Client.new(authorization, **options)
     end
-
-    def undefined
-      @_undefined ||= ::Object.new
-    end
-
-    def undefined?(value)
-      value == undefined
-    end
   end
 end

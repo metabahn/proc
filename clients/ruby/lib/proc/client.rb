@@ -57,6 +57,16 @@ class Proc
   # [public] Connection to proc, configured with an authorization.
   #
   class Client < BasicObject
+    class << self
+      def undefined
+        @_undefined ||= ::Object.new
+      end
+
+      def undefined?(value)
+        value == undefined
+      end
+    end
+
     include ::Is::Async
 
     # [public] The configured authorization.
@@ -135,10 +145,10 @@ class Proc
     #
     # If a block is passed and the proc returns an enumerable, the block will be called with each value.
     #
-    def call(proc = nil, input = ::Proc.undefined, **arguments, &block)
+    def call(proc = nil, input = ::Proc::Client.undefined, **arguments, &block)
       body = []
 
-      unless ::Proc.undefined?(input)
+      unless ::Proc::Client.undefined?(input)
         body << [">>", serialize_value(input)]
       end
 

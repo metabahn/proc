@@ -4,7 +4,7 @@ class Proc
   class Callable < BasicObject
     attr_reader :proc, :input, :arguments
 
-    def initialize(proc, client:, input: ::Proc.undefined, arguments: {})
+    def initialize(proc, client:, input: ::Proc::Client.undefined, arguments: {})
       @proc = proc.to_s
       @client = client
       @input = input
@@ -84,7 +84,7 @@ class Proc
     def serialize(unwrapped: false)
       serialized = ["()", @proc]
 
-      unless ::Proc.undefined?(@input)
+      unless ::Proc::Client.undefined?(@input)
         serialized << [">>", serialized_input]
       end
 
