@@ -33,7 +33,12 @@ class Client {
       }
     }
 
-    return new Client(authorization, options);
+    let client = Client;
+    if (typeof options === "object" && typeof options.client !== "undefined") {
+      client = options.client;
+    }
+
+    return new client(authorization, options);
   }
 
   static authorization() {
@@ -109,14 +114,6 @@ class Client {
   // If a function is passed and the proc returns an enumerable, the function will be called for each value.
   //
   async call(proc, input = undefined, args = {}, callback) {
-    let uriParts = [this.uri];
-
-    if (typeof proc === "string") {
-      uriParts = uriParts.concat(proc.split("."));
-    }
-
-    const uri = uriParts.join("/");
-
     const body = [];
 
     if (typeof input !== "undefined") {
@@ -127,6 +124,10 @@ class Client {
       body.push(["$$", key, serialize(args[key])]);
     }
 
+    return this.process(proc, body, input, args, callback);
+  }
+
+  async process(proc, body, input, args, callback) {
     const options = {
       method: "POST",
       headers: {
@@ -136,6 +137,14 @@ class Client {
       },
       body: JSON.stringify(body)
     }
+
+    let uriParts = [this.uri];
+
+    if (typeof proc === "string") {
+      uriParts = uriParts.concat(proc.split("."));
+    }
+
+    const uri = uriParts.join("/");
 
     let response;
     if (Client.fetch === true) {
