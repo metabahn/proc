@@ -8,11 +8,6 @@ require("../support/acceptance");
 const Proc = require("../../index");
 const client = Proc.connect(process.env.SECRET);
 
-test("throws when secret is missing", async () => {
-  await expect(() => Proc.connect().call("core.ping")).rejects.toThrowError(Unauthorized);
-  await expect(() => Proc.connect().call("core.ping")).rejects.toThrowError("authorization is invalid");
-});
-
 test("throws when secret is invalid", async () => {
   await expect(() => Proc.connect("12321").call("core.ping")).rejects.toThrowError(Unauthorized);
   await expect(() => Proc.connect("12321").call("core.ping")).rejects.toThrowError("authorization is invalid");

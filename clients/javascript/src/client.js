@@ -36,8 +36,25 @@ class Client {
     return new Client(authorization, options);
   }
 
+  static authorization() {
+    try {
+      if (typeof process.env.PROC_AUTH !== "undefined") {
+        return process.env.PROC_AUTH;
+      } else {
+        return require("fs").readFileSync(process.env.HOME + "/.proc/auth");
+      }
+    } catch {
+      // unsupported
+    }
+  }
+
   constructor(authorization, {host = "proc.dev", scheme = "https"} = {}) {
-    this.authorization = authorization;
+    if (typeof authorization === "undefined") {
+      this.authorization = Client.authorization();
+    } else {
+      this.authorization = authorization;
+    }
+
     this.uri = `${scheme}://${host}`;
 
     return new Proxy(this, {
