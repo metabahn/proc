@@ -1,6 +1,13 @@
 ---
 - version: v0.13.0
   changes:
+  - id: 5
+    type: add
+    summary: Add a new client object for generating Proc ASTs in Ruby
+    link: https://github.com/metabahn/proc/pull/5
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
   - id: 3
     type: add
     summary: Introduce global authorization/instance to the Ruby client
