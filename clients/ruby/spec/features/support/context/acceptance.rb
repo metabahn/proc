@@ -7,11 +7,15 @@ Dotenv.load
 
 RSpec.shared_context "acceptance" do
   let(:client) {
-    Proc.connect(authorization, **client_options)
+    Proc.connect(authorization, client: client_class, **client_options)
   }
 
   let(:client_options) {
     {}
+  }
+
+  let(:client_class) {
+    Proc::Client
   }
 
   let(:authorization) {

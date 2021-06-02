@@ -7,8 +7,8 @@ class Proc
   class << self
     # [public] Connect a client with an authorization.
     #
-    def connect(authorization, **options)
-      Client.new(authorization, **options)
+    def connect(authorization, client: Proc::Client, **options)
+      client.new(authorization, **options)
     end
   end
 end
