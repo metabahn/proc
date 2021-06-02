@@ -1,6 +1,13 @@
 ---
 - version: v0.8.0
   changes:
+  - id: 6
+    type: add
+    summary: Add a new client object for generating Proc ASTs in Javascript
+    link: https://github.com/metabahn/proc/pull/6
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
   - id: 4
     type: add
     summary: Introduce global authorization/instance to the Javascript client
