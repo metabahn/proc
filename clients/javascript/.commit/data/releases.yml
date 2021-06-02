@@ -1,4 +1,13 @@
 ---
+- version: v0.8.0
+  changes:
+  - id: 4
+    type: add
+    summary: Introduce global authorization/instance to the Javascript client
+    link: https://github.com/metabahn/proc/pull/4
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
 - version: v0.7.2
   date: '2021-05-13'
   link: https://github.com/metabahn/proc/releases/tag/2021-05-13
