@@ -171,6 +171,10 @@ class Proc
         body << ["$$", key.to_s, serialize_value(value)]
       end
 
+      process(proc: proc, body: body, input: input, arguments: arguments, &block)
+    end
+
+    private def process(proc:, body:, input:, arguments:, &block)
       status, headers, payload = get_payload(proc: proc, body: body)
 
       case status
