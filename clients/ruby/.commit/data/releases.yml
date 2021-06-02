@@ -1,4 +1,13 @@
 ---
+- version: v0.13.0
+  changes:
+  - id: 3
+    type: add
+    summary: Introduce global authorization/instance to the Ruby client
+    link: https://github.com/metabahn/proc/pull/3
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
 - version: v0.12.1
   date: '2021-05-13'
   link: https://github.com/metabahn/proc/releases/tag/2021-05-13
