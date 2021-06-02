@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "core/async"
+require "core/global"
+
 require "http"
 require "msgpack"
 
@@ -65,9 +67,22 @@ class Proc
       def undefined?(value)
         value == undefined
       end
+
+      def authorization
+        ::ENV.fetch("PROC_AUTH") {
+          auth_file_path = ::Pathname.new("~/.proc/auth").expand_path
+
+          if auth_file_path.exist?
+            auth_file_path.read
+          else
+            ""
+          end
+        }.strip
+      end
     end
 
     include ::Is::Async
+    include ::Is::Global
 
     # [public] The configured authorization.
     #
@@ -92,7 +107,7 @@ class Proc
       "content-type" => "application/vnd.proc+msgpack"
     }.freeze
 
-    def initialize(authorization, scheme: "https", host: "proc.dev")
+    def initialize(authorization = ::Proc::Client.authorization, scheme: "https", host: "proc.dev")
       @authorization = authorization
       @scheme = scheme
       @host = host
