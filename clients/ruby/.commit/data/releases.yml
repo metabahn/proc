@@ -1,6 +1,13 @@
 ---
 - version: v0.13.0
   changes:
+  - id: 7
+    type: chg
+    summary: Update Ruby client to call api.proc.dev
+    link: https://github.com/metabahn/proc/pull/7
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
   - id: 5
     type: add
     summary: Add a new client object for generating Proc ASTs in Ruby
