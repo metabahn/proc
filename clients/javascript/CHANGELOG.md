@@ -2,6 +2,7 @@
 
 *unreleased*
 
+  * `chg` [#8](https://github.com/metabahn/proc/pull/8) Update Javascript client to call api.proc.dev ([bryanp](https://github.com/bryanp))
   * `add` [#6](https://github.com/metabahn/proc/pull/6) Add a new client object for generating Proc ASTs in Javascript ([bryanp](https://github.com/bryanp))
   * `add` [#4](https://github.com/metabahn/proc/pull/4) Introduce global authorization/instance to the Javascript client ([bryanp](https://github.com/bryanp))
 
