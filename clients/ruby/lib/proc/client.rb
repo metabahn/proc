@@ -107,7 +107,7 @@ class Proc
       "content-type" => "application/vnd.proc+msgpack"
     }.freeze
 
-    def initialize(authorization = ::Proc::Client.authorization, scheme: "https", host: "proc.dev")
+    def initialize(authorization = ::Proc::Client.authorization, scheme: "https", host: "api.proc.dev")
       @authorization = authorization
       @scheme = scheme
       @host = host
