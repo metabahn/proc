@@ -53,7 +53,7 @@ class Client {
     }
   }
 
-  constructor(authorization, {host = "proc.dev", scheme = "https"} = {}) {
+  constructor(authorization, {host = "api.proc.dev", scheme = "https"} = {}) {
     if (typeof authorization === "undefined") {
       this.authorization = Client.authorization();
     } else {
