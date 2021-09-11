@@ -58,7 +58,7 @@ class Proc
 
   # [public] Connection to proc, configured with an authorization.
   #
-  class Client < BasicObject
+  class Client# < BasicObject
     class << self
       def undefined
         @_undefined ||= ::Object.new

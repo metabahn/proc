@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Proc
-  class Callable < BasicObject
+  class Callable# < BasicObject
     attr_reader :proc, :input, :arguments
 
     def initialize(proc, client:, input: ::Proc::Client.undefined, arguments: {})
