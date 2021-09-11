@@ -248,11 +248,10 @@ class Proc
     end
 
     private def serialize_value(value)
-      case value
-      when ::Symbol
+      if value.respond_to?(:proc_serialize)
+        value.proc_serialize
+      elsif value.is_a?(::Symbol)
         ["@@", value.to_s, {}]
-      when ::Proc::Argument, ::Proc::Callable, ::Proc::Composition
-        value.serialize
       else
         ["%%", value]
       end

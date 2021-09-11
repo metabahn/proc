@@ -7,7 +7,7 @@ class Proc
       @options = options
     end
 
-    def serialize
+    def proc_serialize
       ["@@", @name.to_s, serialized_options]
     end
 
@@ -18,8 +18,8 @@ class Proc
     end
 
     private def serialize_value(value)
-      if value.respond_to?(:serialize)
-        value.serialize
+      if value.respond_to?(:proc_serialize)
+        value.proc_serialize
       else
         ["%%", value]
       end

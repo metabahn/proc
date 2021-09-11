@@ -85,14 +85,14 @@ class Proc
       end
     end
 
-    def serialize
+    def proc_serialize
       serialized = ["{}"]
 
       unless Proc::Client.undefined?(@input)
         serialized << [">>", serialized_input]
       end
 
-      serialized + serialized_arguments + @callables.map { |callable| callable.serialize(unwrapped: true) }
+      serialized + serialized_arguments + @callables.map { |callable| callable.proc_serialize(unwrapped: true) }
     end
 
     def serialized_input
@@ -113,11 +113,10 @@ class Proc
     end
 
     private def serialize_value(value)
-      case value
-      when Symbol
+      if value.respond_to?(:proc_serialize)
+        value.proc_serialize
+      elsif value.is_a?(::Symbol)
         ["@@", value.to_s, {}]
-      when Argument, Callable, Composition
-        value.serialize
       else
         ["%%", value]
       end
