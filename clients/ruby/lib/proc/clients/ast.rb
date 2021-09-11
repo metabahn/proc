@@ -8,11 +8,12 @@ class Proc
     #
     class AST < Client
       private def process(proc:, body:, **)
-        unless proc == "core.exec"
-          body = [["$$", "proc", ["{}", ["()", proc].concat(body)]]]
+        case proc
+        when "core.exec"
+          body.dig(0, 2)
+        else
+          ["{}", ["()", proc].concat(body)]
         end
-
-        body
       end
     end
   end

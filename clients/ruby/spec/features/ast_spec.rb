@@ -12,20 +12,16 @@ RSpec.describe "ruby client api: building asts" do
   }
 
   it "builds the ast for simple calls" do
-    expect(client.core.echo("foo").call).to eq([["$$", "proc", ["{}", ["()", "core.echo", [">>", ["%%", "foo"]]]]]])
+    expect(client.core.echo("foo").call).to eq(["{}", ["()", "core.echo", [">>", ["%%", "foo"]]]])
   end
 
   it "builds the ast for compositions" do
     expect((client.core.echo("foo") >> client.core.echo).call).to eq(
       [
-        [
-          "$$", "proc", [
-            "{}",
-            [">>", ["%%", "foo"]],
-            ["()", "core.echo", [">>", ["%%", "foo"]]],
-            ["()", "core.echo"]
-          ]
-        ]
+        "{}",
+        [">>", ["%%", "foo"]],
+        ["()", "core.echo", [">>", ["%%", "foo"]]],
+        ["()", "core.echo"]
       ]
     )
   end
