@@ -80,6 +80,7 @@ class Proc
       composed << other
       composed
     end
+    alias_method :|, :>>
 
     def proc_serialize(unwrapped: false)
       serialized = ["()", @proc]
