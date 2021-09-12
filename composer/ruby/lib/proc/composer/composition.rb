@@ -44,6 +44,7 @@ class Proc
         composed << other
         composed
       end
+      alias_method :|, :>>
 
       def <<(callable)
         case callable
