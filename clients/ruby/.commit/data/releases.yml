@@ -1,6 +1,13 @@
 ---
 - version: v0.13.0
   changes:
+  - id: 11
+    type: add
+    summary: Add `|` as an alias for `>>` in the ruby client
+    link: https://github.com/metabahn/proc/pull/11
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
   - id: 10
     type: chg
     summary: Extract proc-composer from the proc client library for ruby
