@@ -4,10 +4,7 @@ source "https://rubygems.org"
 
 gemspec
 
-gem "proc-composer", path: "../../composer/ruby"
-
 group :development do
-  gem "dotenv"
   gem "standardrb"
 end
 

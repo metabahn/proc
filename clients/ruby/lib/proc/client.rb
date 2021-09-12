@@ -6,11 +6,12 @@ require "core/global"
 require "http"
 require "msgpack"
 
+require "proc/composer"
+
 require_relative "msgpack/types/decimal"
 MessagePack::DefaultFactory.register_type(0x00, Proc::Msgpack::Types::Decimal)
 MessagePack::DefaultFactory.register_type(-1, Time, packer: MessagePack::Time::Packer, unpacker: MessagePack::Time::Unpacker)
 
-require_relative "argument"
 require_relative "callable"
 require_relative "composition"
 require_relative "enumerator"
@@ -60,14 +61,6 @@ class Proc
   #
   class Client < BasicObject
     class << self
-      def undefined
-        @_undefined ||= ::Object.new
-      end
-
-      def undefined?(value)
-        value == undefined
-      end
-
       def authorization
         ::ENV.fetch("PROC_AUTH") {
           auth_file_path = ::Pathname.new("~/.proc/auth").expand_path
@@ -160,10 +153,10 @@ class Proc
     #
     # If a block is passed and the proc returns an enumerable, the block will be called with each value.
     #
-    def call(proc = nil, input = ::Proc::Client.undefined, **arguments, &block)
+    def call(proc = nil, input = ::Proc::Composer.undefined, **arguments, &block)
       body = []
 
-      unless ::Proc::Client.undefined?(input)
+      unless ::Proc::Composer.undefined?(input)
         body << [">>", serialize_value(input)]
       end
 
@@ -239,7 +232,7 @@ class Proc
     # [public] Builds a named argument with options.
     #
     def argument(name, **options)
-      ::Proc::Argument.new(name, **options)
+      ::Proc::Composer::Argument.new(name, **options)
     end
     alias_method :arg, :argument
 
@@ -251,7 +244,7 @@ class Proc
       case value
       when ::Symbol
         ["@@", value.to_s, {}]
-      when ::Proc::Argument, ::Proc::Callable, ::Proc::Composition
+      when ::Proc::Composer::Argument, ::Proc::Callable, ::Proc::Composition
         value.serialize
       else
         ["%%", value]

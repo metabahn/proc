@@ -1,6 +1,6 @@
 commit:
   changelogs:
-    - label: "commit.changelog.client.rb"
+    - label: "commit.changelog.composer.rb"
       destination: "./CHANGELOG.md"
 
   changetypes:
@@ -35,8 +35,8 @@ license:
   name: "MPL-2.0"
 
 project:
-  slug: "proc"
-  description: "Proc client library."
+  slug: "proc-composer"
+  description: "Proc composer library."
 
   author:
     name: "Bryan Powell"
@@ -50,13 +50,8 @@ project:
 ruby:
   gem:
     version: 3.0.0
-    namespace: "Proc"
+    namespace: "Proc::Composer"
+    path: "proc/composer"
     extra: |-2
         spec.files = Dir["CHANGELOG.md", "README.md", "LICENSE", "lib/**/*"]
         spec.require_path = "lib"
-
-        spec.add_dependency "core-async", "~> 0.6"
-        spec.add_dependency "core-global", "~> 0.0"
-        spec.add_dependency "http", "~> 5.0"
-        spec.add_dependency "msgpack", "~> 1.4"
-        spec.add_dependency "proc-composer", "~> 0.0"
