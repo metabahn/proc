@@ -9,7 +9,7 @@ jobs:
   test-client-javascript:
     runs-on: ubuntu-latest
 
-    name: Test JavaScript
+    name: Test JavaScript Client
 
     steps:
       - uses: actions/checkout@v2
@@ -36,7 +36,7 @@ jobs:
   lint-client-ruby:
     runs-on: ubuntu-latest
 
-    name: Lint Ruby
+    name: Lint Ruby Client
 
     strategy:
       fail-fast: false
@@ -60,7 +60,7 @@ jobs:
   test-client-ruby:
     runs-on: ubuntu-latest
 
-    name: Test Ruby ${{ matrix.ruby }}
+    name: Test Ruby Client ${{ matrix.ruby }}
 
     strategy:
       matrix:
@@ -83,6 +83,60 @@ jobs:
         shell: bash -l -e -o pipefail {0}
         run: |
           cd clients/ruby
+          bundle exec rspec
+        env:
+          SECRET: ${{secrets.PROC_SECRET}}
+
+  lint-composer-ruby:
+    runs-on: ubuntu-latest
+
+    name: Lint Ruby Composer
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.0.1
+          bundler-cache: true
+          working-directory: composer/ruby
+
+      - name: Run Linter
+        shell: bash -l -e -o pipefail {0}
+        run: |
+          cd composer/ruby
+          CI=true bundle exec standardrb
+
+  test-composer-ruby:
+    runs-on: ubuntu-latest
+
+    name: Test Ruby Composer ${{ matrix.ruby }}
+
+    strategy:
+      matrix:
+        ruby:
+          - 3.0.1
+
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+          working-directory: composer/ruby
+
+      - name: Run Tests
+        shell: bash -l -e -o pipefail {0}
+        run: |
+          cd composer/ruby
           bundle exec rspec
         env:
           SECRET: ${{secrets.PROC_SECRET}}
