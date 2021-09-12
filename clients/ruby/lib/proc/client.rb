@@ -230,7 +230,7 @@ class Proc
     # [public] Builds a named argument with options.
     #
     def argument(name, **options)
-      ::Proc::Argument.new(name, **options)
+      ::Proc::Composer::Argument.new(name, **options)
     end
     alias_method :arg, :argument
 
