@@ -1,6 +1,13 @@
 ---
 - version: v0.0.0
   changes:
+  - id: 11
+    type: add
+    summary: Add `|` as an alias for `>>` in the ruby client
+    link: https://github.com/metabahn/proc/pull/11
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
   - id: 10
     type: add
     summary: Initial extraction from the proc gem
