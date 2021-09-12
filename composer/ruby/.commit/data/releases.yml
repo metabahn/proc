@@ -1,5 +1,7 @@
 ---
 - version: v0.0.0
+  date: '2021-09-12'
+  link: https://github.com/metabahn/proc/releases/tag/2021-09-12
   changes:
   - id: 11
     type: add
