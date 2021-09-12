@@ -5,9 +5,8 @@ class Proc
     class Callable < BasicObject
       attr_reader :proc, :input, :arguments
 
-      def initialize(proc, client:, input: ::Proc::Composer.undefined, arguments: {})
+      def initialize(proc, input: ::Proc::Composer.undefined, arguments: {})
         @proc = proc.to_s
-        @client = client
         @input = input
         @arguments = arguments
       end
@@ -17,38 +16,6 @@ class Proc
         @arguments = arguments.dup
       end
 
-      # [public] Dispatches this callable context to proc using the client.
-      #
-      # If a block is passed, it will be called to prior to dispatch and its result passed as a nested context.
-      #
-      def call(input = input_omitted = true, **arguments)
-        if ::Kernel.block_given?
-          arguments[:proc] = yield
-        end
-
-        callable = ::Proc::Composer::Callable.new(
-          @proc,
-          client: @client,
-          input: input_omitted ? @input : input,
-          arguments: @arguments.merge(arguments)
-        )
-
-        @client.call(@proc, callable.input, **callable.arguments)
-      end
-
-      # [public] Dispatches this callable context to proc using the client, calling the given block once for each value.
-      #
-      def each(input = input_omitted = true, **arguments, &block)
-        callable = ::Proc::Composer::Callable.new(
-          @proc,
-          client: @client,
-          input: input_omitted ? @input : input,
-          arguments: @arguments.merge(arguments)
-        )
-
-        @client.call(@proc, callable.input, **callable.arguments, &block)
-      end
-
       # [public] Creates a new callable context based on this one, with a new input and/or arguments.
       #
       def with(input = input_omitted = true, **arguments)
@@ -56,18 +23,13 @@ class Proc
           arguments[:proc] = yield
         end
 
-        ::Proc::Composer::Callable.new(
-          @proc,
-          client: @client,
-          input: input_omitted ? @input : input,
-          arguments: @arguments.merge(arguments)
-        )
+        build_callable(input: input_omitted ? @input : input, arguments: @arguments.merge(arguments))
       end
 
       # [public] Returns a composition built from this callable context and one or more other callables.
       #
       def compose(*others)
-        composed = ::Proc::Composer::Composition.new(client: @client, input: @input)
+        composed = build_composition(input: @input)
         composed << self
         others.each { |other| composed << other }
         composed
@@ -76,7 +38,7 @@ class Proc
       # [public] Returns a composition built from this callable context and another callable.
       #
       def >>(other)
-        composed = ::Proc::Composer::Composition.new(client: @client, input: @input)
+        composed = build_composition(input: @input)
         composed << self
         composed << other
         composed
@@ -119,12 +81,7 @@ class Proc
           @arguments
         end
 
-        ::Proc::Composer::Callable.new(
-          [@proc, proc].join("."),
-          client: @client,
-          input: @input,
-          arguments: arguments
-        )
+        build_callable(proc: [@proc, proc].join("."), input: @input, arguments: arguments)
       end
 
       IGNORE_MISSING = %i[to_hash].freeze
@@ -139,9 +96,8 @@ class Proc
             arguments[:proc] = yield
           end
 
-          ::Proc::Composer::Callable.new(
-            [@proc, name].join("."),
-            client: @client,
+          build_callable(
+            proc: [@proc, name].join("."),
             input: input_omitted ? @input : input,
             arguments: @arguments.merge(arguments)
           )
@@ -165,6 +121,14 @@ class Proc
         else
           ["%%", value]
         end
+      end
+
+      private def build_callable(input:, arguments:, proc: @proc)
+        ::Proc::Composer::Callable.new(proc, input: input, arguments: arguments)
+      end
+
+      private def build_composition(input:)
+        ::Proc::Composer::Composition.new(input: input)
       end
     end
   end

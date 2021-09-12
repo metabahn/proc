@@ -12,6 +12,8 @@ require_relative "msgpack/types/decimal"
 MessagePack::DefaultFactory.register_type(0x00, Proc::Msgpack::Types::Decimal)
 MessagePack::DefaultFactory.register_type(-1, Time, packer: MessagePack::Time::Packer, unpacker: MessagePack::Time::Unpacker)
 
+require_relative "callable"
+require_relative "composition"
 require_relative "enumerator"
 
 class Proc
@@ -114,9 +116,9 @@ class Proc
     #
     def [](proc)
       if ::Kernel.block_given?
-        ::Proc::Composer::Callable.new(proc, client: self, arguments: {proc: yield})
+        ::Proc::Callable.new(proc, client: self, arguments: {proc: yield})
       else
-        ::Proc::Composer::Callable.new(proc, client: self)
+        ::Proc::Callable.new(proc, client: self)
       end
     end
 
@@ -217,9 +219,9 @@ class Proc
     #
     def method_missing(name, input = input_omitted = true, *, **arguments)
       if input_omitted
-        ::Proc::Composer::Callable.new(name, client: self, arguments: arguments)
+        ::Proc::Callable.new(name, client: self, arguments: arguments)
       else
-        ::Proc::Composer::Callable.new(name, client: self, input: input, arguments: arguments)
+        ::Proc::Callable.new(name, client: self, input: input, arguments: arguments)
       end
     end
 
@@ -242,7 +244,7 @@ class Proc
       case value
       when ::Symbol
         ["@@", value.to_s, {}]
-      when ::Proc::Composer::Argument, ::Proc::Composer::Callable, ::Proc::Composer::Composition
+      when ::Proc::Composer::Argument, ::Proc::Callable, ::Proc::Composition
         value.serialize
       else
         ["%%", value]

@@ -5,8 +5,7 @@ class Proc
     class Composition
       attr_reader :input, :callables, :arguments
 
-      def initialize(client:, input:, callables: [], arguments: {})
-        @client = client
+      def initialize(input:, callables: [], arguments: {})
         @input = input
         @callables = callables
         @arguments = arguments
@@ -16,36 +15,6 @@ class Proc
         @callables = @callables.dup
       end
 
-      # [public] Dispatches this composition to proc using the client.
-      #
-      def call(input = input_omitted = true, **arguments)
-        if block_given?
-          arguments[:proc] = yield
-        end
-
-        callable = self.class.new(
-          client: @client,
-          input: input_omitted ? @input : input,
-          callables: @callables.dup,
-          arguments: @arguments.merge(arguments)
-        )
-
-        @client.call("core.exec", Proc::Composer.undefined, proc: callable)
-      end
-
-      # [public] Dispatches this composition to proc using the client, calling the given block once for each value.
-      #
-      def each(input = input_omitted = true, **arguments, &block)
-        callable = self.class.new(
-          client: @client,
-          input: input_omitted ? @input : input,
-          callables: @callables.dup,
-          arguments: @arguments.merge(arguments)
-        )
-
-        @client.call("core.exec", Proc::Composer.undefined, proc: callable, &block)
-      end
-
       # [public] Creates a new composition based on this one, with a new input and/or arguments.
       #
       def with(input = input_omitted = true, **arguments)
@@ -53,11 +22,10 @@ class Proc
           arguments[:proc] = yield
         end
 
-        self.class.new(
-          client: @client,
+        build_composition(
           input: input_omitted ? @input : input,
-          callables: @callables.dup,
-          arguments: @arguments.merge(arguments)
+          arguments: @arguments.merge(arguments),
+          callables: @callables.dup
         )
       end
 
@@ -122,6 +90,10 @@ class Proc
         else
           ["%%", value]
         end
+      end
+
+      private def build_composition(callables:, input:, arguments:)
+        self.class.new(input: input, callables: callables, arguments: arguments)
       end
     end
   end
