@@ -1,0 +1,10 @@
+---
+- version: v0.0.0
+  changes:
+  - id: 10
+    type: add
+    summary: Initial extraction from the proc gem
+    link: https://github.com/metabahn/proc/pull/10
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
