@@ -2,7 +2,6 @@
 
 *unreleased*
 
-  * `add` [#11](https://github.com/metabahn/proc/pull/11) Add `|` as an alias for `>>` in the ruby client ([bryanp](https://github.com/bryanp))
   * `chg` [#10](https://github.com/metabahn/proc/pull/10) Extract proc-composer from the proc client library for ruby ([bryanp](https://github.com/bryanp))
   * `chg` [#7](https://github.com/metabahn/proc/pull/7) Update Ruby client to call api.proc.dev ([bryanp](https://github.com/bryanp))
   * `add` [#3](https://github.com/metabahn/proc/pull/3) Introduce global authorization/instance to the Ruby client ([bryanp](https://github.com/bryanp))
