@@ -1,5 +1,7 @@
 ---
 - version: v0.13.0
+  date: '2021-09-15'
+  link: https://github.com/metabahn/proc/releases/tag/2021-09-15
   changes:
   - id: 10
     type: chg
