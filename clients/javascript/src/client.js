@@ -43,11 +43,14 @@ class Client {
 
   static authorization() {
     try {
+      let value;
       if (typeof process.env.PROC_AUTH !== "undefined") {
-        return process.env.PROC_AUTH;
+        value = process.env.PROC_AUTH;
       } else {
-        return require("fs").readFileSync(process.env.HOME + "/.proc/auth");
+        value = require("fs").readFileSync(process.env.HOME + "/.proc/auth");
       }
+
+      return String(value).trim();
     } catch {
       // unsupported
     }
