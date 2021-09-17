@@ -108,7 +108,6 @@ test("fails when a composition calls an undefined proc", async () => {
   const composition = string.reverse("foo").compose(string.missing);
 
   await expect(() => composition.call()).rejects.toThrowError(Undefined);
-  await expect(() => composition.call()).rejects.toThrowError("undefined proc `type.string.missing'; try one of: type.string, type.string.append, type.string.build, type.string.capitalize, type.string.characters, type.string.chomp, type.string.downcase, type.string.empty, type.string.equal, type.string.integer, type.string.length, type.string.prepend, type.string.reverse, type.string.split, type.string.swapcase, type.string.truncate, type.string.upcase");
 });
 
 describe("using with", () => {
