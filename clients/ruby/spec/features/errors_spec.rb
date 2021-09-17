@@ -35,28 +35,6 @@ RSpec.describe "errors" do
         client["foo.bar.baz"].call
       }.to raise_error(Proc::Undefined, "undefined proc `foo.bar.baz'")
     end
-
-    it "lists known procs at the root namespace" do
-      expect {
-        client.call
-      }.to raise_error(Proc::Undefined) do |error|
-        expect(error.message).to start_with("undefined proc; try one of:")
-      end
-    end
-
-    it "lists known procs at a nested namespace" do
-      expect {
-        client["type"].call
-      }.to raise_error(Proc::Undefined, "undefined proc `type'; try one of: type.array, type.hash, type.number, type.string")
-    end
-
-    it "lists known procs in a deeply nested namespace" do
-      expect {
-        client["type.string.blah"].call
-      }.to raise_error(Proc::Undefined) do |error|
-        expect(error.message).to start_with("undefined proc `type.string.blah'; try one of:")
-      end
-    end
   end
 
   context "input is of the wrong type" do

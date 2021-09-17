@@ -45,20 +45,3 @@ test("throws the request is too large", async () => {
   await expect(() => client.call("core.echo", (new Array(1024 * 128)).join("foo"))).rejects.toThrowError(Invalid);
   await expect(() => client.call("core.echo", (new Array(1024 * 128)).join("foo"))).rejects.toThrowError("request size exceeded the allowed 131072 bytes");
 });
-
-describe("unknown proc discovery", () => {
-  test("lists procs at root", async () => {
-    await expect(() => client.call()).rejects.toThrowError(Undefined);
-    await expect(() => client.call()).rejects.toThrowError("undefined proc; try one of: auth, base, core, enum, keyv, math, proc, rand, time, type, uuid");
-  });
-
-  test("lists procs at a nested namespace", async () => {
-    await expect(() => client.call("type")).rejects.toThrowError(Undefined);
-    await expect(() => client.call("type")).rejects.toThrowError("undefined proc `type'; try one of: type.array, type.hash, type.number, type.string");
-  });
-
-  test("lists procs at a deeply nested namespace", async () => {
-    await expect(() => client.call("type.string.blah")).rejects.toThrowError(Undefined);
-    await expect(() => client.call("type.string.blah")).rejects.toThrowError("undefined proc `type.string.blah'; try one of: type.string, type.string.append, type.string.build, type.string.capitalize, type.string.characters, type.string.chomp, type.string.downcase, type.string.empty, type.string.equal, type.string.integer, type.string.length, type.string.prepend, type.string.reverse, type.string.split, type.string.swapcase, type.string.truncate, type.string.upcase");
-  });
-});
