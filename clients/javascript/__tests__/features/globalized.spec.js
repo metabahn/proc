@@ -16,7 +16,7 @@ function removeAuthFile() {
   fs.unlinkSync(authFilePath);
 }
 
-function replaceAuthFile(contents = process.env.SECRET) {
+function replaceAuthFile(contents = process.env.SECRET + "\n") {
   backupAuthFile();
 
   fs.mkdirSync(authDirPath, {recursive: true});
