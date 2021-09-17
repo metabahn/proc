@@ -1,6 +1,13 @@
 ---
 - version: v0.8.0
   changes:
+  - id: 13
+    type: fix
+    summary: Trim authorizations provided to the javascript client
+    link: https://github.com/metabahn/proc/pull/13
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
   - id: 8
     type: chg
     summary: Update Javascript client to call api.proc.dev
