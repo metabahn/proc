@@ -1,4 +1,6 @@
 .commit/tools
+.env
 build
+Gemfile.lock
 proc
 

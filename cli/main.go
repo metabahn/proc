@@ -1,7 +1,8 @@
 package main
 
+import _ "embed"
+
 import (
-	"bufio"
 	"bytes"
 	"flag"
 	"fmt"
@@ -12,29 +13,42 @@ import (
 	"strings"
 )
 
-var version = "v0.0.0"
+//go:embed VERSION
+var version string
+
+//go:embed help/root.txt
+var help string
+
+//go:embed help/compile.txt
+var compileHelp string
+
+//go:embed help/run.txt
+var runHelp string
+
+//go:embed help/version.txt
+var versionHelp string
 
 func main() {
 	if len(os.Args) > 1 {
-		var nullBytes bytes.Buffer
-		nullWriter := bufio.NewWriter(&nullBytes)
-
 		globalFlags := flag.NewFlagSet("proc", flag.ExitOnError)
-		globalFlags.SetOutput(nullWriter)
 		globalFlags.Usage = func() {
-			commandHelp()
+			commandHelp(false, true)
+		}
+
+		versionFlags := flag.NewFlagSet("version", flag.ExitOnError)
+		versionFlags.Usage = func() {
+			commandHelpVersion(false, true)
 		}
 
 		compileFlags := flag.NewFlagSet("compile", flag.ExitOnError)
-		compileFlags.SetOutput(nullWriter)
 		compileFlags.Usage = func() {
-			commandHelpCompile()
+			commandHelpCompile(false, true)
 		}
 
 		runFlags := flag.NewFlagSet("run", flag.ExitOnError)
-		runFlags.SetOutput(nullWriter)
+    runJsonArg := runFlags.Bool("json", false, "")
 		runFlags.Usage = func() {
-			commandHelpRun()
+			commandHelpRun(false, true)
 		}
 
 		authorizationArg := globalFlags.String("auth", "", "")
@@ -45,19 +59,17 @@ func main() {
 		if *globalHelpArg {
 			if len(globalFlags.Args()) > 0 {
 				switch globalFlags.Args()[0] {
-				case "help":
-					commandHelp()
 				case "version":
-					commandHelpVersion()
+					commandHelpVersion(true, false)
 				case "compile":
-					commandHelpCompile()
+					commandHelpCompile(true, false)
 				case "run":
-					commandHelpRun()
+					commandHelpRun(true, false)
 				default:
-					commandHelp()
+					commandHelp(true, false)
 				}
 			} else {
-				commandHelp()
+				commandHelp(true, false)
 			}
 
 			os.Exit(0)
@@ -66,9 +78,9 @@ func main() {
 		authorization := ensureAuth(*authorizationArg)
 
 		switch globalFlags.Args()[0] {
-		case "help":
-			commandHelp()
 		case "version":
+			versionFlags.Parse(globalFlags.Args()[1:])
+
 			commandVersion()
 		case "compile":
 			compileFlags.Parse(globalFlags.Args()[1:])
@@ -77,52 +89,55 @@ func main() {
 			if len(compileCommandArgs) > 0 {
 				commandCompile(compileCommandArgs[0], authorization)
 			} else {
-				commandHelpCompile()
+				commandHelpCompile(false, true)
+        os.Exit(1)
 			}
 		case "run":
 			runFlags.Parse(globalFlags.Args()[1:])
 			runCommandArgs := runFlags.Args()
 
+      var accept string
+      if *runJsonArg {
+        accept = "application/json"
+      } else {
+        accept = "text/plain"
+      }
+
 			if len(runCommandArgs) > 0 {
-				commandRun(runCommandArgs[0], authorization)
+				commandRun(runCommandArgs[0], authorization, accept)
 			} else {
-				commandHelpRun()
+				commandHelpRun(false, true)
+        os.Exit(1)
 			}
 		default:
-			commandHelp()
+			fmt.Fprintln(os.Stderr, "unknown command: "+globalFlags.Args()[0]+"\n")
+			commandHelp(false, false)
+			os.Exit(1)
 		}
 	} else {
-		commandHelp()
+		commandHelp(false, false)
+		os.Exit(1)
 	}
 }
 
-func commandHelp() {
-	fmt.Println("Usage: proc [global options] <subcommand> [args]\n" +
-		"\nAvailable commands:\n" +
-		"  compile       Compiles a supported source file to a Proc AST.\n" +
-		"  run           Runs a supported source file in Proc.\n" +
-		"  version       Show the current version of this command-line interface.\n" +
-		"\nGlobal options:\n" +
-		"  -auth=AUTH    The authorization to use when interacting with Proc.")
+func commandHelp(success bool, topbreak bool) {
+	output(help, success, topbreak)
 }
 
-func commandHelpCompile() {
-	fmt.Println("Usage: proc compile [FILE]\n" +
-		"\nCompile the given source file, returning the Proc AST as json.")
+func commandHelpCompile(success bool, topbreak bool) {
+	output(compileHelp, success, topbreak)
 }
 
-func commandHelpRun() {
-	fmt.Println("Usage: proc run [FILE]\n" +
-		"\nRun the given source file in Proc, returning the result as json.")
+func commandHelpRun(success bool, topbreak bool) {
+	output(runHelp, success, topbreak)
 }
 
-func commandHelpVersion() {
-	fmt.Println("Usage: proc version\n" +
-		"\nShow the current version of the Proc CLI.")
+func commandHelpVersion(success bool, topbreak bool) {
+	output(versionHelp, success, topbreak)
 }
 
 func commandVersion() {
-	fmt.Println("Proc CLI " + version)
+	fmt.Println("Proc CLI v" + version)
 }
 
 func commandCompile(path string, authorization string) {
@@ -144,10 +159,10 @@ func commandCompile(path string, authorization string) {
 			"lang",
 			[2]string{"%%", ext}}}
 
-	callProc("core/compile", authorization, ast)
+	callProc("core/compile", authorization, ast, "application/json")
 }
 
-func commandRun(path string, authorization string) {
+func commandRun(path string, authorization string, accept string) {
 	checkPath(path)
 
 	data, error := ioutil.ReadFile(path)
@@ -175,19 +190,33 @@ func commandRun(path string, authorization string) {
 						[2]string{"%%", ext}}},
 				[2]string{"()", "core.exec"}}}}
 
-	callProc("core/exec", authorization, ast)
+	callProc("core/exec", authorization, ast, accept)
 }
 
-func check(err error) {
-	if err != nil {
-		fmt.Println(err)
+func callProc(path string, authorization string, ast []interface{}, accept string) {
+	buffer, error := msgpack.Marshal(ast)
+	check(error)
+
+	request, error := http.NewRequest("POST", "https://api.proc.dev/"+path, bytes.NewReader(buffer))
+	request.Header.Add("Authorization", "bearer "+authorization)
+	request.Header.Add("Content-Type", "application/vnd.proc+msgpack")
+	request.Header.Add("Accept", accept)
+
+	client := &http.Client{}
+	response, error := client.Do(request)
+	check(error)
+
+	defer response.Body.Close()
+	body, error := ioutil.ReadAll(response.Body)
+	check(error)
+
+	switch response.StatusCode {
+	case 200:
+		fmt.Println(string(body))
+	default:
+		fmt.Println(response.Status+": ", string(body))
 		os.Exit(1)
 	}
-}
-
-func checkPath(path string) {
-	_, err := os.Stat(path)
-	check(err)
 }
 
 func ensureAuth(authorization string) string {
@@ -209,28 +238,30 @@ func ensureAuth(authorization string) string {
 	return authorization
 }
 
-func callProc(path string, authorization string, ast []interface{}) {
-	buffer, error := msgpack.Marshal(ast)
-	check(error)
-
-	request, error := http.NewRequest("POST", "https://api.proc.dev/"+path, bytes.NewReader(buffer))
-	request.Header.Add("Authorization", "bearer "+authorization)
-	request.Header.Add("Content-Type", "application/vnd.proc+msgpack")
-	request.Header.Add("Accept", "application/json")
-
-	client := &http.Client{}
-	response, error := client.Do(request)
-	check(error)
-
-	defer response.Body.Close()
-	body, error := ioutil.ReadAll(response.Body)
-	check(error)
-
-	switch response.StatusCode {
-	case 200:
-		fmt.Println(string(body))
-	default:
-		fmt.Println(response.Status+": ", string(body))
+func check(err error) {
+	if err != nil {
+    fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
+	}
+}
+
+func checkPath(path string) {
+	_, err := os.Stat(path)
+	check(err)
+}
+
+func output(output string, success bool, topbreak bool) {
+	var finalOutput string
+
+	if topbreak {
+		finalOutput = "\n" + output
+	} else {
+		finalOutput = output
+	}
+
+	if success {
+		fmt.Println(finalOutput)
+	} else {
+		fmt.Fprintln(os.Stderr, finalOutput)
 	}
 }

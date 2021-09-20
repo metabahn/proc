@@ -1,0 +1,6 @@
+Usage: proc run [FILE]
+
+  Run the given source file in Proc, returning the result as json.
+
+Options:
+  -json    Return the result as json.
