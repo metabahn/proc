@@ -9,7 +9,8 @@ import (
 	"github.com/vmihailenco/msgpack/v5"
 	"io/ioutil"
 	"net/http"
-	"os"
+  "os"
+	"path/filepath"
 	"strings"
 )
 
@@ -21,6 +22,12 @@ var help string
 
 //go:embed help/compile.txt
 var compileHelp string
+
+//go:embed help/login.txt
+var loginHelp string
+
+//go:embed help/logout.txt
+var logoutHelp string
 
 //go:embed help/run.txt
 var runHelp string
@@ -45,6 +52,16 @@ func main() {
 			commandHelpCompile(false, true)
 		}
 
+    loginFlags := flag.NewFlagSet("login", flag.ExitOnError)
+    loginFlags.Usage = func() {
+      commandHelpLogin(false, true)
+    }
+
+    logoutFlags := flag.NewFlagSet("logout", flag.ExitOnError)
+    logoutFlags.Usage = func() {
+      commandHelpLogout(false, true)
+    }
+
 		runFlags := flag.NewFlagSet("run", flag.ExitOnError)
     runJsonArg := runFlags.Bool("json", false, "")
 		runFlags.Usage = func() {
@@ -63,6 +80,10 @@ func main() {
 					commandHelpVersion(true, false)
 				case "compile":
 					commandHelpCompile(true, false)
+        case "login":
+          commandHelpLogin(true, false)
+        case "logout":
+          commandHelpLogout(true, false)
 				case "run":
 					commandHelpRun(true, false)
 				default:
@@ -82,6 +103,14 @@ func main() {
 			versionFlags.Parse(globalFlags.Args()[1:])
 
 			commandVersion()
+    case "login":
+      loginFlags.Parse(globalFlags.Args()[1:])
+
+      commandLogin(authorization)
+    case "logout":
+      logoutFlags.Parse(globalFlags.Args()[1:])
+
+      commandLogout()
 		case "compile":
 			compileFlags.Parse(globalFlags.Args()[1:])
 			compileCommandArgs := compileFlags.Args()
@@ -128,12 +157,50 @@ func commandHelpCompile(success bool, topbreak bool) {
 	output(compileHelp, success, topbreak)
 }
 
+func commandHelpLogin(success bool, topbreak bool) {
+  output(loginHelp, success, topbreak)
+}
+
+func commandHelpLogout(success bool, topbreak bool) {
+  output(logoutHelp, success, topbreak)
+}
+
 func commandHelpRun(success bool, topbreak bool) {
 	output(runHelp, success, topbreak)
 }
 
 func commandHelpVersion(success bool, topbreak bool) {
 	output(versionHelp, success, topbreak)
+}
+
+func commandLogin(authorization string) {
+  error := os.MkdirAll(authdir(), os.ModePerm)
+  check(error)
+
+  error = os.WriteFile(authpath(), []byte(authorization), 0644)
+  check(error)
+}
+
+func commandLogout() {
+  if _, error := os.Stat(authpath()); error == nil {
+    error = os.Remove(authpath())
+    check(error)
+  }
+}
+
+func authdir() string {
+  return filepath.Join(homedir(), ".proc")
+}
+
+func authpath() string {
+  return filepath.Join(authdir(), "auth")
+}
+
+func homedir() string {
+  homedir, error := os.UserHomeDir()
+  check(error);
+
+  return homedir;
 }
 
 func commandVersion() {
