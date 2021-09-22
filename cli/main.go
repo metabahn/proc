@@ -23,14 +23,14 @@ var help string
 //go:embed help/compile.txt
 var compileHelp string
 
+//go:embed help/exec.txt
+var execHelp string
+
 //go:embed help/login.txt
 var loginHelp string
 
 //go:embed help/logout.txt
 var logoutHelp string
-
-//go:embed help/run.txt
-var runHelp string
 
 //go:embed help/version.txt
 var versionHelp string
@@ -62,10 +62,10 @@ func main() {
       commandHelpLogout(false, true)
     }
 
-		runFlags := flag.NewFlagSet("run", flag.ExitOnError)
-    runJsonArg := runFlags.Bool("json", false, "")
-		runFlags.Usage = func() {
-			commandHelpRun(false, true)
+		execFlags := flag.NewFlagSet("exec", flag.ExitOnError)
+    execJsonArg := execFlags.Bool("json", false, "")
+		execFlags.Usage = func() {
+			commandHelpExec(false, true)
 		}
 
 		authorizationArg := globalFlags.String("auth", "", "")
@@ -84,8 +84,8 @@ func main() {
           commandHelpLogin(true, false)
         case "logout":
           commandHelpLogout(true, false)
-				case "run":
-					commandHelpRun(true, false)
+				case "exec":
+					commandHelpExec(true, false)
 				default:
 					commandHelp(true, false)
 				}
@@ -121,21 +121,21 @@ func main() {
 				commandHelpCompile(false, true)
         os.Exit(1)
 			}
-		case "run":
-			runFlags.Parse(globalFlags.Args()[1:])
-			runCommandArgs := runFlags.Args()
+		case "exec":
+			execFlags.Parse(globalFlags.Args()[1:])
+			execCommandArgs := execFlags.Args()
 
       var accept string
-      if *runJsonArg {
+      if *execJsonArg {
         accept = "application/json"
       } else {
         accept = "text/plain"
       }
 
-			if len(runCommandArgs) > 0 {
-				commandRun(runCommandArgs[0], authorization, accept)
+			if len(execCommandArgs) > 0 {
+				commandExec(execCommandArgs[0], authorization, accept)
 			} else {
-				commandHelpRun(false, true)
+				commandHelpExec(false, true)
         os.Exit(1)
 			}
 		default:
@@ -165,8 +165,8 @@ func commandHelpLogout(success bool, topbreak bool) {
   output(logoutHelp, success, topbreak)
 }
 
-func commandHelpRun(success bool, topbreak bool) {
-	output(runHelp, success, topbreak)
+func commandHelpExec(success bool, topbreak bool) {
+	output(execHelp, success, topbreak)
 }
 
 func commandHelpVersion(success bool, topbreak bool) {
@@ -229,7 +229,7 @@ func commandCompile(path string, authorization string) {
 	callProc("core/compile", authorization, ast, "application/json")
 }
 
-func commandRun(path string, authorization string, accept string) {
+func commandExec(path string, authorization string, accept string) {
 	checkPath(path)
 
 	data, error := ioutil.ReadFile(path)
