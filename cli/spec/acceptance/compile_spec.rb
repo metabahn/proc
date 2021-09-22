@@ -2,7 +2,7 @@
 
 RSpec.describe "calling the compile command" do
   it "compiles the given file" do
-    expect(stdout("compile procs/foo.rb")).to eq("[\"{}\",[\"()\",\"core.echo\",[\">>\",[\"%%\",\"foo\"]]],[\"()\",\"type.string.reverse\"],[\"()\",\"type.string.upcase\"]]")
+    expect(stdout("compile procs/foo.rb")).to eq("[[\"{}\",[\">>\",[\"%%\",\"foo\"]],[\"()\",\"core.echo\",[\">>\",[\"%%\",\"foo\"]]],[\"()\",\"type.string.reverse\"],[\"()\",\"type.string.upcase\"]]]")
   end
 
   it "exits successfully" do
