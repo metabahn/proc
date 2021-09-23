@@ -1,5 +1,7 @@
 ---
 - version: v0.14.0
+  date: '2021-09-22'
+  link: https://github.com/metabahn/proc/releases/tag/2021-09-22
   changes:
   - id: 14
     type: chg
