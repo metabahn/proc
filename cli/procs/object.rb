@@ -1,5 +1,5 @@
-exec {
-  core.echo("foo")
+proc(name: "deployed") {
+  core.echo
     .| type.string.reverse
     .| type.string.upcase
 }

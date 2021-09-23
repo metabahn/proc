@@ -1,0 +1,6 @@
+Usage: proc deploy [FILE]
+
+  Deploys objects defined in the given source file.
+
+Options:
+  -json    Return the result as json.
