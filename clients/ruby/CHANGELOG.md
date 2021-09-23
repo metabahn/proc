@@ -1,6 +1,6 @@
-## v0.14.0
+## [v0.14.0](https://github.com/metabahn/proc/releases/tag/2021-09-22)
 
-*unreleased*
+*released on 2021-09-22*
 
   * `chg` [#14](https://github.com/metabahn/proc/pull/14) Change Ruby client error handling to fallback to returning a result ([bryanp](https://github.com/bryanp))
 
