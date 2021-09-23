@@ -171,27 +171,6 @@ class Proc
       status, headers, payload = get_payload(proc: proc, body: body)
 
       case status
-      when 200
-        result = extract_output(payload)
-
-        if (cursor = headers["x-cursor"])
-          enumerator = if cursor.empty?
-            ::Proc::Enumerator.new(result)
-          else
-            ::Proc::Enumerator.new(result) {
-              arguments[:cursor] = cursor.to_s
-              call(proc, input, **arguments)
-            }
-          end
-
-          if block
-            enumerator.each(&block)
-          else
-            enumerator
-          end
-        else
-          result
-        end
       when 400
         ::Kernel.raise ::Proc::Invalid, extract_error_message(payload)
       when 401
@@ -211,7 +190,30 @@ class Proc
       when 508
         ::Kernel.raise ::Proc::Error, extract_error_message(payload)
       else
-        ::Kernel.raise ::Proc::Error, "unhandled"
+        result = extract_output(payload)
+
+        if !result.nil?
+          if (cursor = headers["x-cursor"])
+            enumerator = if cursor.empty?
+              ::Proc::Enumerator.new(result)
+            else
+              ::Proc::Enumerator.new(result) {
+                arguments[:cursor] = cursor.to_s
+                call(proc, input, **arguments)
+              }
+            end
+
+            if block
+              enumerator.each(&block)
+            else
+              enumerator
+            end
+          else
+            result
+          end
+        elsif (error = extract_error_message(payload))
+          ::Kernel.raise ::Proc::Error, error
+        end
       end
     end
 
