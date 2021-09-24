@@ -87,6 +87,26 @@ RSpec.describe "calling the deploy command" do
     end
   end
 
+  describe "passing args" do
+    it "passes one arg" do
+      expect(stdout("deploy -arg name=bar procs/deploy/args/single.rb")).to eq(
+        <<~OUTPUT.strip
+          [proc] bar: ok
+            api.proc.dev/lib/bar:dev
+        OUTPUT
+      )
+    end
+
+    it "passes multiple args" do
+      expect(stdout("deploy -arg name=bar -arg release=true procs/deploy/args/many.rb")).to eq(
+        <<~OUTPUT.strip
+          [proc] bar: ok
+            api.proc.dev/lib/bar
+        OUTPUT
+      )
+    end
+  end
+
   describe "-json flag" do
     it "returns json for successful deploys" do
       expect(stdout("deploy -json procs/deploy/single.rb")).to eq("[{\"status\":\"ok\",\"type\":\"proc\",\"name\":\"deployed\",\"link\":\"api.proc.dev/lib/deployed:dev\"}]")

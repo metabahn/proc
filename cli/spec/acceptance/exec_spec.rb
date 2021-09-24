@@ -29,7 +29,7 @@ RSpec.describe "calling the exec command" do
     end
   end
 
-  describe "passing arg" do
+  describe "passing args" do
     it "passes one arg" do
       expect(stdout("exec -arg foo=bar procs/exec/args/single.rb")).to eq("RAB")
     end

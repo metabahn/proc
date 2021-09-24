@@ -9,3 +9,7 @@ exec {
 exec {
   proc.delete(name: "deployed2")
 }
+
+exec {
+  proc.delete(name: "bar")
+}

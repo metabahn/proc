@@ -42,19 +42,19 @@ var versionHelp string
 type argFlags map[string]interface{}
 
 func (i *argFlags) String() string {
-  return ""
+	return ""
 }
 
 func (i *argFlags) Set(value string) error {
-  parts := strings.SplitN(value, "=", 2)
+	parts := strings.SplitN(value, "=", 2)
 
-  if len(parts) == 2 {
-    (*i)[parts[0]] = parts[1]
-  } else {
-    (*i)[parts[0]] = nil
-  }
+	if len(parts) == 2 {
+		(*i)[parts[0]] = parts[1]
+	} else {
+		(*i)[parts[0]] = nil
+	}
 
-  return nil
+	return nil
 }
 
 func main() {
@@ -74,8 +74,10 @@ func main() {
 			commandHelpCompile(false, true)
 		}
 
+		var deployArgs argFlags = make(map[string]interface{})
 		deployFlags := flag.NewFlagSet("deploy", flag.ExitOnError)
 		deployJsonArg := deployFlags.Bool("json", false, "")
+		deployFlags.Var(&deployArgs, "arg", "")
 		deployFlags.Usage = func() {
 			commandHelpDeploy(false, true)
 		}
@@ -90,11 +92,11 @@ func main() {
 			commandHelpLogout(false, true)
 		}
 
-    var execArgs argFlags = make(map[string]interface{})
+		var execArgs argFlags = make(map[string]interface{})
 		execFlags := flag.NewFlagSet("exec", flag.ExitOnError)
 		execJsonArg := execFlags.Bool("json", false, "")
-    execFlags.Var(&execArgs, "arg", "")
-    execFlags.Usage = func() {
+		execFlags.Var(&execArgs, "arg", "")
+		execFlags.Usage = func() {
 			commandHelpExec(false, true)
 		}
 
@@ -165,7 +167,7 @@ func main() {
 			}
 
 			if len(deployCommandArgs) > 0 {
-				commandDeploy(deployCommandArgs[0], authorization, accept)
+				commandDeploy(deployCommandArgs[0], authorization, accept, deployArgs)
 			} else {
 				commandHelpDeploy(false, true)
 				os.Exit(1)
@@ -291,7 +293,7 @@ type DeployResult struct {
 	Error  string
 }
 
-func commandDeploy(path string, authorization string, accept string) {
+func commandDeploy(path string, authorization string, accept string, args map[string]interface{}) {
 	checkPath(path)
 
 	data, error := ioutil.ReadFile(path)
@@ -319,6 +321,7 @@ func commandDeploy(path string, authorization string, accept string) {
 						[2]string{"%%", ext}}},
 				[2]string{"()", "core.deploy"}}}}
 
+	ast = appendArgs(ast, args)
 	jsonData := callProc("core/exec", authorization, ast, accept)
 
 	switch accept {
@@ -380,11 +383,16 @@ func commandExec(path string, authorization string, accept string, args map[stri
 						[2]string{"%%", ext}}},
 				[2]string{"()", "core.exec"}}}}
 
-  for key, value := range args {
-    ast = append(ast, [3]interface{} {"$$", key, value})
-  }
-
+	ast = appendArgs(ast, args)
 	fmt.Println(string(callProc("core/exec", authorization, ast, accept)))
+}
+
+func appendArgs(ast []interface{}, args map[string]interface{}) []interface{} {
+	for key, value := range args {
+		ast = append(ast, [3]interface{}{"$$", key, value})
+	}
+
+	return ast
 }
 
 func callProc(path string, authorization string, ast []interface{}, accept string) []byte {
