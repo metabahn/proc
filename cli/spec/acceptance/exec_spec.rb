@@ -2,11 +2,11 @@
 
 RSpec.describe "calling the exec command" do
   it "execs the given file" do
-    expect(stdout("exec procs/foo.rb")).to eq("OOF")
+    expect(stdout("exec procs/exec/foo.rb")).to eq("OOF")
   end
 
   it "exits successfully" do
-    expect(status("exec procs/foo.rb").success?).to eq(true)
+    expect(status("exec procs/exec/foo.rb").success?).to eq(true)
   end
 
   describe "passing an unknown file" do
@@ -29,9 +29,19 @@ RSpec.describe "calling the exec command" do
     end
   end
 
+  describe "passing arg" do
+    it "passes one arg" do
+      expect(stdout("exec -arg foo=bar procs/exec/args/single.rb")).to eq("RAB")
+    end
+
+    it "passes multiple args" do
+      expect(stdout("exec -arg foo=bar -arg bar=baz procs/exec/args/many.rb")).to eq("[\"bar\",\"baz\"]")
+    end
+  end
+
   describe "-json flag" do
     it "returns json" do
-      expect(stdout("exec -json procs/foo.rb")).to eq("\"OOF\"")
+      expect(stdout("exec -json procs/exec/foo.rb")).to eq("\"OOF\"")
     end
   end
 

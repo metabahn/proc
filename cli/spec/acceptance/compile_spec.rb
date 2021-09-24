@@ -2,11 +2,11 @@
 
 RSpec.describe "calling the compile command" do
   it "compiles the given file" do
-    expect(stdout("compile procs/foo.rb")).to eq("[[\"{}\",[\">>\",[\"%%\",\"foo\"]],[\"()\",\"core.echo\",[\">>\",[\"%%\",\"foo\"]]],[\"()\",\"type.string.reverse\"],[\"()\",\"type.string.upcase\"]]]")
+    expect(stdout("compile procs/exec/foo.rb")).to eq("[[\"{}\",[\">>\",[\"%%\",\"foo\"]],[\"()\",\"core.echo\",[\">>\",[\"%%\",\"foo\"]]],[\"()\",\"type.string.reverse\"],[\"()\",\"type.string.upcase\"]]]")
   end
 
   it "exits successfully" do
-    expect(status("compile procs/foo.rb").success?).to eq(true)
+    expect(status("compile procs/exec/foo.rb").success?).to eq(true)
   end
 
   describe "passing an unknown file" do

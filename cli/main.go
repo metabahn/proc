@@ -39,6 +39,24 @@ var logoutHelp string
 //go:embed help/version.txt
 var versionHelp string
 
+type argFlags map[string]interface{}
+
+func (i *argFlags) String() string {
+  return ""
+}
+
+func (i *argFlags) Set(value string) error {
+  parts := strings.SplitN(value, "=", 2)
+
+  if len(parts) == 2 {
+    (*i)[parts[0]] = parts[1]
+  } else {
+    (*i)[parts[0]] = nil
+  }
+
+  return nil
+}
+
 func main() {
 	if len(os.Args) > 1 {
 		globalFlags := flag.NewFlagSet("proc", flag.ExitOnError)
@@ -72,9 +90,11 @@ func main() {
 			commandHelpLogout(false, true)
 		}
 
+    var execArgs argFlags = make(map[string]interface{})
 		execFlags := flag.NewFlagSet("exec", flag.ExitOnError)
 		execJsonArg := execFlags.Bool("json", false, "")
-		execFlags.Usage = func() {
+    execFlags.Var(&execArgs, "arg", "")
+    execFlags.Usage = func() {
 			commandHelpExec(false, true)
 		}
 
@@ -162,7 +182,7 @@ func main() {
 			}
 
 			if len(execCommandArgs) > 0 {
-				commandExec(execCommandArgs[0], authorization, accept)
+				commandExec(execCommandArgs[0], authorization, accept, execArgs)
 			} else {
 				commandHelpExec(false, true)
 				os.Exit(1)
@@ -332,7 +352,7 @@ func commandDeploy(path string, authorization string, accept string) {
 	}
 }
 
-func commandExec(path string, authorization string, accept string) {
+func commandExec(path string, authorization string, accept string, args map[string]interface{}) {
 	checkPath(path)
 
 	data, error := ioutil.ReadFile(path)
@@ -359,6 +379,10 @@ func commandExec(path string, authorization string, accept string) {
 						"lang",
 						[2]string{"%%", ext}}},
 				[2]string{"()", "core.exec"}}}}
+
+  for key, value := range args {
+    ast = append(ast, [3]interface{} {"$$", key, value})
+  }
 
 	fmt.Println(string(callProc("core/exec", authorization, ast, accept)))
 }
