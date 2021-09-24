@@ -3,4 +3,6 @@ Usage: proc deploy [FILE]
   Deploys objects defined in the given source file.
 
 Options:
-  -json    Return the result as json.
+  -arg       Pass an argument as `key=value`. Can be used multiple times.
+  -json      Return the result as json.
+  -release   Deploy to the release stage (defaults to dev stage).
