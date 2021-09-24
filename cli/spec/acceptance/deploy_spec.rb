@@ -2,41 +2,40 @@
 
 RSpec.describe "calling the deploy command" do
   after do
-    run("exec procs/object-cleanup.rb")
-    run("exec procs/object-all-cleanup.rb")
+    run("exec procs/deploy/cleanup.rb")
   end
 
   it "deploys the given file" do
-    expect(status("deploy procs/object.rb").success?).to be(true)
+    expect(status("deploy procs/deploy/single.rb").success?).to be(true)
 
-    expect(stdout("exec procs/object-call.rb")).to eq("321GNITSET")
+    expect(stdout("exec procs/deploy/single-call.rb")).to eq("321GNITSET")
   end
 
   it "outputs the expected result" do
-    expect(stdout("deploy procs/object.rb")).to eq(
+    expect(stdout("deploy procs/deploy/single.rb")).to eq(
       <<~OUTPUT.strip
         [proc] deployed: ok
-          api.proc.dev/lib/deployed
+          api.proc.dev/lib/deployed:dev
       OUTPUT
     )
   end
 
   it "exits successfully" do
-    expect(status("deploy procs/object.rb").success?).to eq(true)
+    expect(status("deploy procs/deploy/single.rb").success?).to eq(true)
   end
 
-  describe "deploying a file with all types" do
+  describe "deploying a file with many types" do
     it "outputs the expected result" do
-      expect(stdout("deploy procs/object-all.rb")).to eq(
+      expect(stdout("deploy procs/deploy/many.rb")).to eq(
         <<~OUTPUT.strip
           [exec]: ok
             started
 
           [proc] deployed1: ok
-            api.proc.dev/lib/deployed1
+            api.proc.dev/lib/deployed1:dev
 
           [proc] deployed2: ok
-            api.proc.dev/lib/deployed2
+            api.proc.dev/lib/deployed2:dev
 
           [exec]: ok
             finished
@@ -47,19 +46,19 @@ RSpec.describe "calling the deploy command" do
 
   describe "deploying a file that contains no deployable objects" do
     it "outputs the expected result" do
-      expect(stdout("deploy procs/object-none.rb")).to eq("400 Bad Request: invalid argument `objects' for `core.deploy' (does not have any deployable objects)")
+      expect(stdout("deploy procs/deploy/none.rb")).to eq("400 Bad Request: invalid argument `objects' for `core.deploy' (does not have any deployable objects)")
     end
   end
 
   describe "deploying a file that fails to deploy" do
     it "outputs the expected result" do
-      expect(stdout("deploy procs/object-fail.rb")).to eq(
+      expect(stdout("deploy procs/deploy/fail.rb")).to eq(
         <<~OUTPUT.strip
           [exec]: ok
             started
 
           [proc] deployed: ok
-            api.proc.dev/lib/deployed
+            api.proc.dev/lib/deployed:dev
 
           [proc] (undefined): failed
             invalid argument `name' for `proc.deploy' (must contain only alphanumeric characters; `.' is allowed)
@@ -90,15 +89,15 @@ RSpec.describe "calling the deploy command" do
 
   describe "-json flag" do
     it "returns json for successful deploys" do
-      expect(stdout("deploy -json procs/object.rb")).to eq("[{\"status\":\"ok\",\"type\":\"proc\",\"name\":\"deployed\",\"link\":\"api.proc.dev/lib/deployed\"}]")
+      expect(stdout("deploy -json procs/deploy/single.rb")).to eq("[{\"status\":\"ok\",\"type\":\"proc\",\"name\":\"deployed\",\"link\":\"api.proc.dev/lib/deployed:dev\"}]")
     end
 
     it "returns json for unsuccessful deploys" do
-      expect(stdout("deploy -json procs/object-fail.rb")).to eq("[{\"status\":\"ok\",\"type\":\"exec\",\"output\":\"started\"},{\"status\":\"ok\",\"type\":\"proc\",\"name\":\"deployed\",\"link\":\"api.proc.dev/lib/deployed\"},{\"status\":\"failed\",\"type\":\"proc\",\"name\":null,\"error\":\"invalid argument `name' for `proc.deploy' (must contain only alphanumeric characters; `.' is allowed)\"}]")
+      expect(stdout("deploy -json procs/deploy/fail.rb")).to eq("[{\"status\":\"ok\",\"type\":\"exec\",\"output\":\"started\"},{\"status\":\"ok\",\"type\":\"proc\",\"name\":\"deployed\",\"link\":\"api.proc.dev/lib/deployed:dev\"},{\"status\":\"failed\",\"type\":\"proc\",\"name\":null,\"error\":\"invalid argument `name' for `proc.deploy' (must contain only alphanumeric characters; `.' is allowed)\"}]")
     end
 
     it "returns json for total failures" do
-      expect(stdout("deploy -json procs/object-none.rb")).to eq("{\"error\":{\"message\":\"invalid argument `objects' for `core.deploy' (does not have any deployable objects)\"}}")
+      expect(stdout("deploy -json procs/deploy/none.rb")).to eq("{\"error\":{\"message\":\"invalid argument `objects' for `core.deploy' (does not have any deployable objects)\"}}")
     end
   end
 
