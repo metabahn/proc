@@ -1,0 +1,3 @@
+Usage: proc compile [FILE]
+
+  Compile the given source file, returning the Proc AST as json.

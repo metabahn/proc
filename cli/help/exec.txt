@@ -1,0 +1,7 @@
+Usage: proc exec [FILE]
+
+  Run the given source file in Proc, returning the result.
+
+Options:
+  -arg     Pass an argument as `key=value`. Can be used multiple times.
+  -json    Return the result as json.

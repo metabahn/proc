@@ -1,0 +1,48 @@
+commit:
+  changelogs:
+    - label: "commit.changelog.cli"
+      destination: "./CHANGELOG.md"
+
+  changetypes:
+    - label: "commit.type.add"
+      name: "add"
+    - label: "commit.type.chg"
+      name: "chg"
+    - label: "commit.type.fix"
+      name: "fix"
+    - label: "commit.type.dep"
+      name: "dep"
+
+  includes:
+    - ruby-rspec
+    - ruby-standard
+    - oss
+    - git
+    - base
+
+  externals:
+    - repo: "metabahn/commit-templates"
+      private: true
+
+git:
+  ignore:
+    - ".env"
+    - "build"
+    - "Gemfile.lock"
+    - "proc"
+
+license:
+  slug: mpl
+  name: "MPL-2.0"
+
+project:
+  description: "Proc CLI"
+
+  author:
+    name: "Bryan Powell"
+    email: "bryan@metabahn.com"
+    homepage: "https://proc.dev"
+
+  copyright:
+    attribution: "Metabahn"
+    year: 2021

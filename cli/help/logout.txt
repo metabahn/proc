@@ -1,0 +1,3 @@
+Usage: proc logout
+
+  Remove any authorization stored in the local ~/.proc/auth credentials file.

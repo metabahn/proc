@@ -140,3 +140,45 @@ jobs:
           bundle exec rspec
         env:
           SECRET: ${{secrets.PROC_SECRET}}
+
+  test-cli:
+    runs-on: ubuntu-latest
+
+    name: Test CLI ${{ matrix.ruby }}
+
+    strategy:
+      matrix:
+        ruby:
+          - 3.0.1
+
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.17' # The Go version to download (if necessary) and use.
+      - run: go version
+
+      - name: Setup Go
+        shell: bash -l -e -o pipefail {0}
+        run: |
+          cd cli
+          go mod vendor
+          go version
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+          working-directory: cli
+
+      - name: Run Tests
+        shell: bash -l -e -o pipefail {0}
+        run: |
+          cd cli
+          bundle exec rspec
+        env:
+          PROC_AUTH: ${{secrets.PROC_SECRET}}

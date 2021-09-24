@@ -1,0 +1,13 @@
+Usage: proc [global options] <subcommand> [args]
+
+Available commands:
+  compile       Compiles a supported source file to a Proc AST.
+  deploy        Deploys objects defined in the given source file to Proc.
+  exec          Runs a supported source file in Proc.
+  login         Save an authorization to the local credentials file.
+  logout        Remove any authorization saved to the local credentials file.
+  version       Show the current version of this command-line interface.
+
+Global options:
+  -auth=AUTH    The authorization to use when interacting with Proc.
+  -help         Show this help output, or the help for the given command.

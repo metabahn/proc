@@ -1,0 +1,5 @@
+Usage: proc login
+
+  Save the current authorization to a ~/.proc/auth credentials file.
+
+  The saved authorization can be passed through the PROC_AUTH environment variable or the -auth global option.
