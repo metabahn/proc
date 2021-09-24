@@ -77,6 +77,7 @@ func main() {
 		var deployArgs argFlags = make(map[string]interface{})
 		deployFlags := flag.NewFlagSet("deploy", flag.ExitOnError)
 		deployJsonArg := deployFlags.Bool("json", false, "")
+		deployReleaseArg := deployFlags.Bool("release", false, "")
 		deployFlags.Var(&deployArgs, "arg", "")
 		deployFlags.Usage = func() {
 			commandHelpDeploy(false, true)
@@ -167,7 +168,7 @@ func main() {
 			}
 
 			if len(deployCommandArgs) > 0 {
-				commandDeploy(deployCommandArgs[0], authorization, accept, deployArgs)
+				commandDeploy(deployCommandArgs[0], authorization, accept, deployArgs, *deployReleaseArg)
 			} else {
 				commandHelpDeploy(false, true)
 				os.Exit(1)
@@ -293,7 +294,7 @@ type DeployResult struct {
 	Error  string
 }
 
-func commandDeploy(path string, authorization string, accept string, args map[string]interface{}) {
+func commandDeploy(path string, authorization string, accept string, args map[string]interface{}, release bool) {
 	checkPath(path)
 
 	data, error := ioutil.ReadFile(path)
@@ -319,7 +320,7 @@ func commandDeploy(path string, authorization string, accept string, args map[st
 						"$$",
 						"lang",
 						[2]string{"%%", ext}}},
-				[2]string{"()", "core.deploy"}}}}
+				[3]interface{}{"()", "core.deploy", [3]interface{}{"$$", "release", release}}}}}
 
 	ast = appendArgs(ast, args)
 	jsonData := callProc("core/exec", authorization, ast, accept)

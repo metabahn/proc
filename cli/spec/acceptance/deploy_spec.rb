@@ -98,10 +98,21 @@ RSpec.describe "calling the deploy command" do
     end
 
     it "passes multiple args" do
-      expect(stdout("deploy -arg name=bar -arg release=true procs/deploy/args/many.rb")).to eq(
+      expect(stdout("deploy -arg name=bar -arg production=true procs/deploy/args/many.rb")).to eq(
         <<~OUTPUT.strip
           [proc] bar: ok
             api.proc.dev/lib/bar
+        OUTPUT
+      )
+    end
+  end
+
+  describe "-release flag" do
+    it "deploys to the release stage" do
+      expect(stdout("deploy -release procs/deploy/single.rb")).to eq(
+        <<~OUTPUT.strip
+          [proc] deployed: ok
+            api.proc.dev/lib/deployed
         OUTPUT
       )
     end
