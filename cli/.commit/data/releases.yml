@@ -1,0 +1,10 @@
+---
+- version: v0.0.0
+  changes:
+  - id: 12
+    type: add
+    summary: Proc CLI
+    link: https://github.com/metabahn/proc/pull/12
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
