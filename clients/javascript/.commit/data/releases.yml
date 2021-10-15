@@ -1,6 +1,13 @@
 ---
 - version: v0.8.0
   changes:
+  - id: 17
+    type: chg
+    summary: Update JS client to use proc.run
+    link: https://github.com/metabahn/proc/pull/17
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
   - id: 13
     type: fix
     summary: Trim authorizations provided to the javascript client
