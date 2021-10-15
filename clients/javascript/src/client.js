@@ -56,7 +56,7 @@ class Client {
     }
   }
 
-  constructor(authorization, {host = "api.proc.dev", scheme = "https"} = {}) {
+  constructor(authorization, {host = "proc.run", scheme = "https"} = {}) {
     if (typeof authorization === "undefined") {
       this.authorization = Client.authorization();
     } else {
