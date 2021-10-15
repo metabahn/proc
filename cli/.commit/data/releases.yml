@@ -1,6 +1,13 @@
 ---
 - version: v0.0.0
   changes:
+  - id: 15
+    type: chg
+    summary: Update CLI to use proc.run domain
+    link: https://github.com/metabahn/proc/pull/15
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
   - id: 12
     type: add
     summary: Proc CLI
