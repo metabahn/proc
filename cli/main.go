@@ -400,7 +400,7 @@ func callProc(path string, authorization string, ast []interface{}, accept strin
 	buffer, error := msgpack.Marshal(ast)
 	check(error)
 
-	request, error := http.NewRequest("POST", "https://api.proc.dev/"+path, bytes.NewReader(buffer))
+	request, error := http.NewRequest("POST", "https://proc.run/"+path, bytes.NewReader(buffer))
 	request.Header.Add("Authorization", "bearer "+authorization)
 	request.Header.Add("Content-Type", "application/vnd.proc+msgpack")
 	request.Header.Add("Accept", accept)
