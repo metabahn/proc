@@ -1,3 +1,9 @@
+## v0.15.0
+
+*unreleased*
+
+  * `chg` [#16](https://github.com/metabahn/proc/pull/16) Update Ruby client to use proc.run ([bryanp](https://github.com/bryanp))
+
 ## [v0.14.0](https://github.com/metabahn/proc/releases/tag/2021-09-22)
 
 *released on 2021-09-22*
