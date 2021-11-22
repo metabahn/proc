@@ -1,6 +1,13 @@
 ---
 - version: v0.0.0
   changes:
+  - id: 18
+    type: fix
+    summary: Improve handling of various return value types
+    link: https://github.com/metabahn/proc/pull/18
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
   - id: 15
     type: chg
     summary: Update CLI to use proc.run domain
