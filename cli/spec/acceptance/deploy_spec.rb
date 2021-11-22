@@ -61,7 +61,7 @@ RSpec.describe "calling the deploy command" do
             proc.run/lib/deployed:dev
 
           [proc] (undefined): failed
-            invalid argument `name' for `proc.deploy' (must contain only alphanumeric characters; `.' is allowed)
+            invalid argument `name' for `proc.deploy' (must contain only alphanumeric characters; `.' and `_' are allowed)
         OUTPUT
       )
     end
@@ -124,7 +124,7 @@ RSpec.describe "calling the deploy command" do
     end
 
     it "returns json for unsuccessful deploys" do
-      expect(stdout("deploy -json procs/deploy/fail.rb")).to eq("[{\"status\":\"ok\",\"type\":\"exec\",\"output\":\"started\"},{\"status\":\"ok\",\"type\":\"proc\",\"name\":\"deployed\",\"link\":\"proc.run/lib/deployed:dev\"},{\"status\":\"failed\",\"type\":\"proc\",\"name\":null,\"error\":\"invalid argument `name' for `proc.deploy' (must contain only alphanumeric characters; `.' is allowed)\"}]")
+      expect(stdout("deploy -json procs/deploy/fail.rb")).to eq("[{\"status\":\"ok\",\"type\":\"exec\",\"output\":\"started\"},{\"status\":\"ok\",\"type\":\"proc\",\"name\":\"deployed\",\"link\":\"proc.run/lib/deployed:dev\"},{\"status\":\"failed\",\"type\":\"proc\",\"name\":null,\"error\":\"invalid argument `name' for `proc.deploy' (must contain only alphanumeric characters; `.' and `_' are allowed)\"}]")
     end
 
     it "returns json for total failures" do
