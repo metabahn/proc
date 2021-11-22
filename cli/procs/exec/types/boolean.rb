@@ -1,0 +1,3 @@
+exec {
+  core.echo(true)
+}
