@@ -289,7 +289,7 @@ type DeployResult struct {
 	Status string
 	Type   string
 	Name   string
-	Output string
+	Output interface{}
 	Link   string
 	Error  string
 }
@@ -343,7 +343,19 @@ func commandDeploy(path string, authorization string, accept string, args map[st
 			case "ok":
 				switch result.Type {
 				case "exec":
-					fmt.Printf("[%s]: %s\n  %s\n\n", result.Type, result.Status, result.Output)
+					switch result.Output.(type) {
+					case int:
+						fmt.Printf("[%s]: %s\n  %v\n\n", result.Type, result.Status, result.Output)
+					case float64:
+						fmt.Printf("[%s]: %s\n  %v\n\n", result.Type, result.Status, result.Output)
+					case string:
+						fmt.Printf("[%s]: %s\n  %v\n\n", result.Type, result.Status, result.Output)
+					default:
+						output, error := json.Marshal(result.Output)
+						check(error)
+
+						fmt.Printf("[%s]: %s\n  %s\n\n", result.Type, result.Status, output)
+					}
 				default:
 					fmt.Printf("[%s] %s: %s\n  %s\n\n", result.Type, resultName, result.Status, result.Link)
 				}
