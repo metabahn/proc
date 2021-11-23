@@ -2,6 +2,7 @@
 
 require "core/async"
 require "core/global"
+require "core/inspect"
 
 require "http"
 require "msgpack"
@@ -76,6 +77,8 @@ class Proc
 
     include ::Is::Async
     include ::Is::Global
+    include ::Is::Inspectable
+    inspects :@scheme, :@host, ::Core::Inspect::Inspection.new(name: :@authorization, resolver: :safe_authorization), :@request_count
 
     # [public] The configured authorization.
     #
@@ -217,10 +220,28 @@ class Proc
       end
     end
 
+    IGNORE_MISSING = %i[].freeze
+    KERNEL_DELEGATE = %i[
+      class
+      instance_variables
+      instance_variable_get
+      instance_variable_set
+      object_id
+      public_send
+    ].freeze
+
     # [public] Allows callable contexts to be built through method lookups.
     #
-    def method_missing(name, input = input_omitted = true, *, **arguments)
-      if input_omitted
+    def method_missing(name, input = input_omitted = true, *parameters, **arguments, &block)
+      if IGNORE_MISSING.include?(name)
+        super
+      elsif KERNEL_DELEGATE.include?(name)
+        if input_omitted
+          ::Kernel.instance_method(name).bind_call(self, *parameters, **arguments, &block)
+        else
+          ::Kernel.instance_method(name).bind_call(self, input, *parameters, **arguments, &block)
+        end
+      elsif input_omitted
         ::Proc::Callable.new(name, client: self, arguments: arguments)
       else
         ::Proc::Callable.new(name, client: self, input: input, arguments: arguments)
@@ -237,6 +258,13 @@ class Proc
       ::Proc::Composer::Argument.new(name, **options)
     end
     alias_method :arg, :argument
+
+    # [public] Returns a partial representation of the authorization that is safe to include in logs.
+    #
+    def safe_authorization
+      return unless @authorization
+      "#{@authorization[0..7]}...#{@authorization[-5..]}"
+    end
 
     private def build_uri(proc)
       ::File.join(@__base_url, proc.to_s.split(".").join("/"))

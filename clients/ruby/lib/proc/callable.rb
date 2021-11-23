@@ -2,6 +2,8 @@
 
 class Proc
   class Callable < Composer::Callable
+    inspects :@client
+
     def initialize(proc, client:, **kwargs)
       @client = client
 

@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
+require "core/inspect"
+
 class Proc
   module Composer
     class Argument
+      include Is::Inspectable
+
       def initialize(name, **options)
         @name = name
         @options = options

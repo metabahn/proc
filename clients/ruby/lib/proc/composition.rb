@@ -2,6 +2,8 @@
 
 class Proc
   class Composition < Composer::Composition
+    inspects :@client
+
     def initialize(client:, **kwargs)
       @client = client
 
