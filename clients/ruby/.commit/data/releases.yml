@@ -1,14 +1,13 @@
 ---
 - version: v0.15.0
   changes:
-  - id: 19
-    type: add
-    summary: Support inspection in clients, callables, and compositions
-    link: https://github.com/metabahn/proc/pull/19
+  - id: 20
+    type: chg
+    summary: Rename client `request_count` to `count`
+    link: https://github.com/metabahn/proc/pull/20
     author:
       username: bryanp
       link: https://github.com/bryanp
-  changes:
   - id: 16
     type: chg
     summary: Update Ruby client to use proc.run
