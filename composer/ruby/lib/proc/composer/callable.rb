@@ -90,7 +90,10 @@ class Proc
         build_callable(proc: [@proc, proc].join("."), input: @input, arguments: arguments)
       end
 
-      IGNORE_MISSING = %i[to_hash].freeze
+      IGNORE_MISSING = %i[
+        to_hash
+      ].freeze
+
       KERNEL_DELEGATE = %i[
         class
         instance_variables
@@ -98,6 +101,7 @@ class Proc
         instance_variable_set
         object_id
         public_send
+        respond_to?
       ].freeze
 
       # [public] Allows nested callable contexts to be built through method lookups.
@@ -136,10 +140,12 @@ class Proc
         case value
         when ::Symbol
           ["@@", value.to_s, {}]
-        when ::Proc::Composer::Argument, ::Proc::Composer::Callable, ::Proc::Composer::Composition
-          value.serialize
         else
-          ["%%", value]
+          if value.respond_to?(:serialize)
+            value.serialize
+          else
+            ["%%", value]
+          end
         end
       end
 
