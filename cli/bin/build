@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+platforms = [
+  "darwin/amd64",
+  "darwin/arm64",
+  "freebsd/386",
+  "freebsd/amd64",
+  "freebsd/arm",
+  "linux/386",
+  "linux/amd64",
+  "linux/arm",
+  "linux/arm64",
+  "openbsd/386",
+  "openbsd/amd64",
+  "solaris/amd64",
+  "windows/386",
+  "windows/amd64"
+].freeze
+
+package = "proc"
+version = File.read("VERSION").strip
+
+system "rm -rf build"
+
+platforms.each do |platform|
+  puts "building #{platform}"
+
+  os, arch = platform.split("/")
+  name = "#{package}-#{version}-#{os}-#{arch}"
+
+  system "mkdir -p build/#{name}"
+  system "env GOOS=#{os} GOARCH=#{arch} go build -o build/#{name}/#{package}"
+  system "cd build && zip -r #{name}.zip #{name} && cd -"
+  system "rm -r build/#{name}"
+end
