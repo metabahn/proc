@@ -1,7 +1,7 @@
 build: format test
 
 format:
-	cd src/proc && go fmt
+	go fmt
 
 test:
-	cd src/proc && go test
+	bundle exec rspec
