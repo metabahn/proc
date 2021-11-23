@@ -30,7 +30,7 @@ RSpec.describe "inspecting" do
   end
 
   private def client_inspection
-    "#<Proc::Client:0x[a-zA-Z0-9]+, @scheme=\"https\", @host=\"proc.run\", @authorization=\"#{client.safe_authorization}\", @request_count=0>"
+    "#<Proc::Client:0x[a-zA-Z0-9]+, @scheme=\"https\", @host=\"proc.run\", @authorization=\"#{client.safe_authorization}\", @count=0>"
   end
 
   private def callable_inspection(callable)

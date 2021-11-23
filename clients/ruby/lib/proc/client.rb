@@ -78,7 +78,7 @@ class Proc
     include ::Is::Async
     include ::Is::Global
     include ::Is::Inspectable
-    inspects :@scheme, :@host, ::Core::Inspect::Inspection.new(name: :@authorization, resolver: :safe_authorization), :@request_count
+    inspects :@scheme, :@host, ::Core::Inspect::Inspection.new(name: :@authorization, resolver: :safe_authorization), :@count
 
     # [public] The configured authorization.
     #
@@ -94,7 +94,7 @@ class Proc
 
     # [public] The number of requests this client has performed.
     #
-    attr_reader :request_count
+    attr_reader :count
 
     attr_reader :response
 
@@ -107,7 +107,7 @@ class Proc
       @authorization = authorization
       @scheme = scheme
       @host = host
-      @request_count = 0
+      @count = 0
 
       @__base_url = "#{@scheme}://#{host}"
       @__headers = {
@@ -283,7 +283,7 @@ class Proc
 
     private def get_payload(proc:, body:)
       await {
-        @request_count += 1
+        @count += 1
 
         response = ::HTTP.headers(@__headers).post(build_uri(proc), body: ::MessagePack.pack(body))
 
