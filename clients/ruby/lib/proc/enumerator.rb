@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
+require "core/inspect"
+
 class Proc
   class Enumerator
     include Enumerable
+
+    include Is::Inspectable
+    inspects :@values
 
     attr_reader :values, :next_block
 

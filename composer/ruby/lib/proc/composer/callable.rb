@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
+require "core/inspect"
+
 class Proc
   module Composer
     class Callable < BasicObject
+      include ::Is::Inspectable
+      inspects :@proc, :@input, :@arguments
+
       attr_reader :proc, :input, :arguments
 
       def initialize(proc, input: ::Proc::Composer.undefined, arguments: {})
@@ -86,14 +91,28 @@ class Proc
       end
 
       IGNORE_MISSING = %i[to_hash].freeze
+      KERNEL_DELEGATE = %i[
+        class
+        instance_variables
+        instance_variable_get
+        instance_variable_set
+        object_id
+        public_send
+      ].freeze
 
       # [public] Allows nested callable contexts to be built through method lookups.
       #
-      def method_missing(name, input = input_omitted = true, **arguments)
+      def method_missing(name, input = input_omitted = true, *parameters, **arguments, &block)
         if IGNORE_MISSING.include?(name)
           super
+        elsif KERNEL_DELEGATE.include?(name)
+          if input_omitted
+            ::Kernel.instance_method(name).bind_call(self, *parameters, **arguments, &block)
+          else
+            ::Kernel.instance_method(name).bind_call(self, input, *parameters, **arguments, &block)
+          end
         else
-          if ::Kernel.block_given?
+          if block
             arguments[:proc] = yield
           end
 

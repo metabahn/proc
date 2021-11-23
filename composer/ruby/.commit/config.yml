@@ -55,3 +55,5 @@ ruby:
     extra: |-2
         spec.files = Dir["CHANGELOG.md", "README.md", "LICENSE", "lib/**/*"]
         spec.require_path = "lib"
+
+        spec.add_dependency "core-inspect", "~> 0.1"

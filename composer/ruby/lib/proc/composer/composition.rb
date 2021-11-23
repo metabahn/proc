@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
+require "core/inspect"
+
 class Proc
   module Composer
     class Composition
+      include Is::Inspectable
+      inspects :@input, :@arguments, :@callables
+
       attr_reader :input, :callables, :arguments
 
       def initialize(input:, callables: [], arguments: {})
