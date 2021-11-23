@@ -1,4 +1,13 @@
 ---
+- version: v0.1.0
+  changes:
+  - id: 19
+    type: add
+    summary: Support inspection in clients, callables, and compositions
+    link: https://github.com/metabahn/proc/pull/19
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
 - version: v0.0.0
   date: '2021-09-12'
   link: https://github.com/metabahn/proc/releases/tag/2021-09-12
