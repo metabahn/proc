@@ -1,3 +1,9 @@
+## v0.1.0
+
+*unreleased*
+
+  * `add` [#19](https://github.com/metabahn/proc/pull/19) Support inspection in clients, callables, and compositions ([bryanp](https://github.com/bryanp))
+
 ## [v0.0.0](https://github.com/metabahn/proc/releases/tag/2021-09-12)
 
 *released on 2021-09-12*
