@@ -1,6 +1,6 @@
 .commit/tools
 .env
-build/*
+build
 Gemfile.lock
 proc
 
