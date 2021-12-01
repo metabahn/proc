@@ -91,10 +91,12 @@ class Proc
         case value
         when Symbol
           ["@@", value.to_s, {}]
-        when Argument, Callable, Composition
-          value.serialize
         else
-          ["%%", value]
+          if value.respond_to?(:serialize)
+            value.serialize
+          else
+            ["%%", value]
+          end
         end
       end
 

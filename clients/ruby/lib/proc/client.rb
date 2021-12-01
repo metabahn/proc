@@ -220,7 +220,9 @@ class Proc
       end
     end
 
-    IGNORE_MISSING = %i[].freeze
+    IGNORE_MISSING = %i[
+    ].freeze
+
     KERNEL_DELEGATE = %i[
       class
       instance_variables
@@ -228,6 +230,7 @@ class Proc
       instance_variable_set
       object_id
       public_send
+      respond_to?
     ].freeze
 
     # [public] Allows callable contexts to be built through method lookups.
@@ -274,10 +277,12 @@ class Proc
       case value
       when ::Symbol
         ["@@", value.to_s, {}]
-      when ::Proc::Composer::Argument, ::Proc::Callable, ::Proc::Composition
-        value.serialize
       else
-        ["%%", value]
+        if value.respond_to?(:serialize)
+          value.serialize
+        else
+          ["%%", value]
+        end
       end
     end
 
