@@ -1,3 +1,9 @@
+## v0.15.1
+
+*unreleased*
+
+  * `dep` [#23](https://github.com/metabahn/proc/pull/23) Bump composer version ([bryanp](https://github.com/bryanp))
+
 ## [v0.15.0](https://github.com/metabahn/proc/releases/tag/2022-01-13)
 
 *released on 2022-01-13*
