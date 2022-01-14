@@ -19,8 +19,8 @@ Gem::Specification.new do |spec|
   spec.files = Dir["CHANGELOG.md", "README.md", "LICENSE", "lib/**/*"]
   spec.require_path = "lib"
 
-  spec.add_dependency "core-async", "~> 0.6"
-  spec.add_dependency "core-global", "~> 0.0"
+  spec.add_dependency "core-async", "~> 0.10"
+  spec.add_dependency "core-global", "~> 0.1"
   spec.add_dependency "core-inspect", "~> 0.1"
   spec.add_dependency "http", "~> 5.0"
   spec.add_dependency "msgpack", "~> 1.4"
