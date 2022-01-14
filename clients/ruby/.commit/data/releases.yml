@@ -1,6 +1,13 @@
 ---
 - version: v0.15.0
   changes:
+  - id: 22
+    type: dep
+    summary: Update dependencies
+    link: https://github.com/metabahn/proc/pull/22
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
   - id: 20
     type: chg
     summary: Rename client `request_count` to `count`
