@@ -2,6 +2,7 @@
 
 *unreleased*
 
+  * `dep` [#22](https://github.com/metabahn/proc/pull/22) Update dependencies ([bryanp](https://github.com/bryanp))
   * `chg` [#20](https://github.com/metabahn/proc/pull/20) Rename client `request_count` to `count` ([bryanp](https://github.com/bryanp))
   * `chg` [#16](https://github.com/metabahn/proc/pull/16) Update Ruby client to use proc.run ([bryanp](https://github.com/bryanp))
 
