@@ -1,6 +1,6 @@
-## v0.15.0
+## [v0.15.0](https://github.com/metabahn/proc/releases/tag/2022-01-13)
 
-*unreleased*
+*released on 2022-01-13*
 
   * `dep` [#22](https://github.com/metabahn/proc/pull/22) Update dependencies ([bryanp](https://github.com/bryanp))
   * `chg` [#20](https://github.com/metabahn/proc/pull/20) Rename client `request_count` to `count` ([bryanp](https://github.com/bryanp))
