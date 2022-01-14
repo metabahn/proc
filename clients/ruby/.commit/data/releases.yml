@@ -1,5 +1,7 @@
 ---
 - version: v0.15.1
+  date: '2022-01-13.1'
+  link: https://github.com/metabahn/proc/releases/tag/2022-01-13.1
   changes:
   - id: 23
     type: dep
