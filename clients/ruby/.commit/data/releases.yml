@@ -1,4 +1,13 @@
 ---
+- version: v0.15.1
+  changes:
+  - id: 23
+    type: dep
+    summary: Bump composer version
+    link: https://github.com/metabahn/proc/pull/23
+    author:
+      username: bryanp
+      link: https://github.com/bryanp
 - version: v0.15.0
   date: '2022-01-13'
   link: https://github.com/metabahn/proc/releases/tag/2022-01-13
