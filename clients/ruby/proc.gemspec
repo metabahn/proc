@@ -24,5 +24,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "core-inspect", "~> 0.1"
   spec.add_dependency "http", "~> 5.0"
   spec.add_dependency "msgpack", "~> 1.4"
-  spec.add_dependency "proc-composer", "~> 0.0"
+  spec.add_dependency "proc-composer", "~> 0.1"
 end
